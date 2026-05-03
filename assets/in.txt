@@ -1,1 +1,12 @@
-f
+;; Program računa y = 2a+b+1, program se učitava od adrese 200, podaci od adrese 210
+
+200 LDA 210
+201 CIL
+202 ADD 211
+203 INC
+204 STA 212
+205 HLT
+
+210 DEC 27  ;; a
+211 DEC 14  ;; b
+212 DEC 0   ;; y
