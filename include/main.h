@@ -18,7 +18,7 @@ typedef struct lineOg{
 
 typedef struct lineT{
     short address;
-    unsigned int instr;
+    unsigned short instr;
 } lineT;
 
 

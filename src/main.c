@@ -66,7 +66,7 @@ lineOg LoadLine(char *src){
         pos++;
     }
     TempBuffer[pos] = '\000';
-    puts(TempBuffer);
+    //puts(TempBuffer);
     
     lineOg Result;
     char OperandBuffer[5];
@@ -82,39 +82,40 @@ lineOg LoadLine(char *src){
     return Result;
 }
 
-int Assemble(char *str, size_t size){
+lineT *Assemble(char *str, size_t size, int *instrCount){
     int lCount = LineCount(str, size);
-    lineOg *instructions = calloc(lCount, sizeof(lineOg));
-    int insCount = 0;
     lineT *tInstr = calloc(lCount, sizeof(lineT));
     int tInsCount = 0;
-    if(instructions == NULL) 
+    if(tInstr == NULL)
         ErrorExit("Couldn't allocate space for instructions array");
 
     char *cPtr = strtok(str, "\n");
-    instructions[insCount] = LoadLine(cPtr);
-    if(instructions[insCount].name[0] != '\0') insCount++;
-
-    while((cPtr = strtok(NULL, "\n")) != NULL) {
-        instructions[insCount] = LoadLine(cPtr);
-        if(instructions[insCount].name[0] != '\0') insCount++;
-    }
-
-    for(int i = 0; i < insCount; i++){
-        printf("Translating: %d|%s|%d\n", instructions[i].address, instructions[i].name, instructions[i].operand);
-        tInstr[tInsCount] = TranslateInstruction(instructions[i]);
-        printf("(%d)Result: %d\n", tInstr[tInsCount].address, tInstr[tInsCount].instr);
+    lineOg instr = LoadLine(cPtr);
+    if(instr.name[0] != '\000'){
+        fprintf(stdout, "Translating: %d|%s|%d\n", instr.address, instr.name, instr.operand);
+        tInstr[tInsCount] = TranslateInstruction(instr);
+        fprintf(stdout, "(%d)Result: %d\n", tInstr[tInsCount].address, tInstr[tInsCount].instr);
         tInsCount++;
     }
 
-    free(instructions);
-    free(tInstr);
+    while((cPtr = strtok(NULL, "\n")) != NULL){
+        instr = LoadLine(cPtr);
+        if(instr.name[0] != '\000'){
+            fprintf(stdout, "Translating: %d|%s|%d\n", instr.address, instr.name, instr.operand);
+            tInstr[tInsCount] = TranslateInstruction(instr);
+            fprintf(stdout, "(%d)Result: %d\n", tInstr[tInsCount].address, tInstr[tInsCount].instr);
+            tInsCount++;
+        }
+    }
+
+    *instrCount = tInsCount;
+    return tInstr;
 }
 
 int main(int argc, char *argv[]){
     setlocale(LC_ALL, ".UTF8");
 
-    if(argc != 2) {
+    if(argc != 2){
         printf("Usage: %s <FilePath>", argv[0]);
         return 1;
     }
@@ -130,10 +131,23 @@ int main(int argc, char *argv[]){
     size_t Feedback = fread(FileBuffer, sizeof(char), fSize, f);
     FileBuffer[Feedback] = '\000';
     
-    //fputs(FileBuffer, stdout);
-    //putchar('\n');
-    Assemble(FileBuffer, Feedback);
-    
+    int InstrCount;
+    lineT *instr = Assemble(FileBuffer, Feedback, &InstrCount);
+
+    FILE *outF = fopen("assets/out.bin", "wb");
+    fwrite("", 1, 1, outF);
+    fseek(outF, 0, SEEK_SET);
+
+    //fwrite(intr, sizeof(lineT), InstrCount, outF);
+    for(int i = 0; i < InstrCount; i++){
+        printf("(%d|%x)_(%d|%x)\n", instr[i].address, instr[i].address, instr[i].instr, instr[i].instr);
+        fseek(outF, instr[i].address*2, SEEK_SET);
+        fwrite(&instr[i].instr, sizeof(unsigned short), 1, outF);
+    }
+
+    fclose(f);
+    fclose(outF);
+    free(instr);
     free(FileBuffer);
     return 0;
 }
