@@ -5,9 +5,10 @@
             "name": "(gdb) Debugger Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/Project/Project.exe",
+            "program": "${workspaceFolder}/build/bin/emulator.exe",
             "args": [
-                "assets/in.txt"
+                "assets/out.bin",
+                "200"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

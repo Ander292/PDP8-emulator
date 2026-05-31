@@ -12,13 +12,13 @@
 #define BSA 0x5U
 #define ISZ 0x6U
 
-#define ANDI 0x8U
-#define ADDI 0x9U
-#define LDAI 0xAU
-#define STAI 0xBU
-#define BUNI 0xCU
-#define BSAI 0xDU
-#define ISZI 0xEU
+#define IAND 0x8U
+#define IADD 0x9U
+#define ILDA 0xAU
+#define ISTA 0xBU
+#define IBUN 0xCU
+#define IBSA 0xDU
+#define IISZ 0xEU
 
 #define CLA 0x7800U
 #define CLE 0x7400U
@@ -35,7 +35,7 @@
 
 typedef struct translation_info{
     char name[5];
-    unsigned int number;
+    unsigned short number;
 } TranslInfo;
 
 TranslInfo MemoryInstrTable[] = { // Only 1 byte, the rest is operand

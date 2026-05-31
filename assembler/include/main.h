@@ -21,8 +21,8 @@ typedef struct lineT{
     union{
         unsigned short instr;
         struct{
-            unsigned short instr : 4;
             unsigned short opernd : 12;
+            unsigned short instr : 4;
         } parts;
     };
 } lineT;

@@ -172,7 +172,7 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildEmulator" ) -OR ( $mode -eq "buil
     $LinkerFlags = @(
         "-pedantic"
         "-g"
-        "-shared"
+        #"-shared"
         #"-Wl,-Map=outputG.map"
         #"-Wl,--out-implib,libmy_lib.dll.a"
         #"-m64"
@@ -229,5 +229,5 @@ if ( ( $mode -eq "full" ) -OR ( $mode -eq "runAssembler" ) ) {
 
 if ( ( $mode -eq "full" ) -OR ( $mode -eq "runEmulator" ) ) {
     Write-Host "Running program..."
-    & "$OutputExeE" "assets/out.bin"
+    & "$OutputExeE" "assets/out.bin" 200
 }
