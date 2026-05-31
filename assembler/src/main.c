@@ -31,10 +31,10 @@ lineT TranslateInstruction(lineOg l){
     };
 
     if(l.operand != 0){
-        for(int i = 0; i < (int)sizeof(MemoryInstrTable); i++){
+        for(int i = 0; i < (int)sizeof(MemoryInstrTable) / (int)sizeof(TranslInfo); i++){
             if(!strcmp(l.name, MemoryInstrTable[i].name)){
-                Result.instr = MemoryInstrTable[i].number << 12;
-                Result.instr |= l.operand;
+                Result.parts.instr = MemoryInstrTable[i].number;
+                Result.parts.opernd = l.operand;
                 break;
             }
         }
@@ -43,9 +43,9 @@ lineT TranslateInstruction(lineOg l){
         }
     }
     else{
-        for(int i = 0; i < (int)sizeof(RegisterTranslTable); i++){
-            if(!strcmp(l.name, RegisterTranslTable[i].name)){
-                Result.instr = RegisterTranslTable[i].number;
+        for(int i = 0; i < (int)sizeof(RegisterInstrTable) / (int)sizeof(TranslInfo); i++){
+            if(!strcmp(l.name, RegisterInstrTable[i].name)){
+                Result.instr = RegisterInstrTable[i].number;
                 break;
             }
         }
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]){
 
     //fwrite(intr, sizeof(lineT), InstrCount, outF);
     for(int i = 0; i < InstrCount; i++){
-        printf("(%d|%x)_(%d|%x)\n", instr[i].address, instr[i].address, instr[i].instr, instr[i].instr);
+        printf("Address: (%d|%x) Instruction: (%d|%x)\n", instr[i].address, instr[i].address, instr[i].instr, instr[i].instr);
         fseek(outF, instr[i].address*2, SEEK_SET);
         fwrite(&instr[i].instr, sizeof(unsigned short), 1, outF);
     }

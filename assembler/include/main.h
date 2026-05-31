@@ -18,7 +18,13 @@ typedef struct lineOg{
 
 typedef struct lineT{
     short address;
-    unsigned short instr;
+    union{
+        unsigned short instr;
+        struct{
+            unsigned short instr : 4;
+            unsigned short opernd : 12;
+        } parts;
+    };
 } lineT;
 
 
