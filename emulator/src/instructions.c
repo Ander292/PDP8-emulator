@@ -76,14 +76,11 @@ DEFINE_INSTR(sta){
 }
 DEFINE_INSTR(bun){
     switch(regState->SC){
-        case 0: // Loading the destination address into MAR
-            regState->MAR = GET_OPERAND(regState->MBR);
-            break;
-        case 1: // Loading the address itself
-            regState->MBR = GET_OPERAND(memory[regState->MAR]);
-            break;
-        case 2: // Loads the address of the jump into PC
+        case 0: // Loading the destination address into PC
             regState->PC = GET_OPERAND(regState->MBR);
+            break;
+        case 1:
+        case 2:
             break;
         case 3: // Goes to FETCH cycle
             regState->F = 0;

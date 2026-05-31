@@ -6,23 +6,24 @@
 ;; Petlja
 ;; Provjera uslova (i < len) => (len - i > 0) => (-i + len > 0)
 202 LDA 298         ;; Učitavam brojač
-203 CMA             ;; Negiram akumulator
-204 ADD 299         ;; Sabiram dužinu
-205 SPA             ;; Ako je akumulator pozitivan preskačem
-206 BUN 216         ;; Skok na kraj
+203 INC             ;; Inkrementiram brojač
+204 CMA             ;; Negiram akumulator
+205 ADD 299         ;; Sabiram dužinu
+206 SPA             ;; Ako je akumulator pozitivan preskačem
+207 BUN 217         ;; Skok na kraj
 ;; Tijelo petlje
-207 LDA 297         ;; Učitavam adresu prvog
-208 ADD 298         ;; Dodajem brojač
-209 STA 296         ;; Pripremam za indirekciju
-210 LDA 295         ;; Učitavam broj
-211 STA*296         ;; Čuvam broj na adresu koja je upisana na 296
+208 LDA 297         ;; Učitavam adresu prvog
+209 ADD 298         ;; Dodajem brojač
+210 STA 296         ;; Pripremam za indirekciju
+211 LDA 295         ;; Učitavam broj
+212 STA*296         ;; Čuvam broj na adresu koja je upisana na 296
 ;; Inkrement
-212 LDA 298         ;; Učitavam brojač
-213 INC             ;; Uvećavam brojač
-214 STA 298         ;; Čuvam brojač
-215 BUN 202         ;; Skok na provjeru uslova
+213 LDA 298         ;; Učitavam brojač
+214 INC             ;; Uvećavam brojač
+215 STA 298         ;; Čuvam brojač
+216 BUN 202         ;; Skok na provjeru uslova
 ;; Kraj petlje
-216 HLT             ;; Kraj programa
+217 HLT             ;; Kraj programa
 
 
 
