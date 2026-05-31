@@ -114,6 +114,8 @@ int main(int argc, char *argv[]){
 
     initRegisters(&regs, atoi(argv[2]));
 
+    memoryDumpCsv("assets/pre.csv", memory, MEMORY_SIZE);
+
     for(regs.SC = 0; regs.S == 1; regs.SC = (regs.SC + 1) % 4){
         switch(GET_CYCLE(regs.F, regs.R)){
             case CYCLE_FETCH:{
@@ -144,7 +146,7 @@ int main(int argc, char *argv[]){
 
                     In case of indirection then the address of the memory word which contains the address of the operand is inside MBR[4-15].
                 */
-            } break;
+             } break;
             case CYCLE_INDIRECT:{
                 switch(regs.SC){
                     case 0:

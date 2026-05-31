@@ -27,9 +27,9 @@
 #define CIR 0x7080U
 #define CIL 0x7040U
 #define INC 0x7020U
-#define SPA 0x7008U
-#define SNA 0x7004U
-#define SZA 0x7002U
+#define SPA 0x7010U
+#define SNA 0x7008U
+#define SZA 0x7004U
 #define SZE 0x7002U
 #define HLT 0x7001U
 

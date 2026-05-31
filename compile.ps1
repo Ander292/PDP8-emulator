@@ -38,22 +38,22 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildAssembler" ) -OR ( $mode -eq "bui
     # Assembler
     $SrcDir             = Join-Path         $AssemblerDir       "src"
     $IncludeDir         = Join-Path         $AssemblerDir       "include"
-    $ResourceDir        = Join-Path         $AssemblerDir       "resources"
+    #$ResourceDir        = Join-Path         $AssemblerDir       "resources"
 
     $ObjLocal           = Join-Path         $ObjDir             $Assembler
-    $ResourcesObj       = Join-Path         $ObjDir             "resource.obj"
+    #$ResourcesObj       = Join-Path         $ObjDir             "resource.obj"
 
     
 
     # Creating platform folders if they are missing
     New-Item -Type Directory -Force -Path   $SrcDir             | Out-Null
-    New-Item -Type Directory -Force -Path   $ResourceDir        | Out-Null
+    #New-Item -Type Directory -Force -Path   $ResourceDir        | Out-Null
     New-Item -Type Directory -Force -Path   $ObjLocal           | Out-Null
 
     [array]$Sources     = Get-ChildItem     "$SrcDir\*.c"       | ForEach-Object { $_.FullName }
     [array]$ObjC        = Get-ChildItem     "$SrcDir\*.c"       | ForEach-Object { $_.BaseName + ".obj" }
 
-    [array]$Resources   = Get-ChildItem     "$ResourceDir\*.rc" | ForEach-Object { $_.FullName }
+    #[array]$Resources   = Get-ChildItem     "$ResourceDir\*.rc" | ForEach-Object { $_.FullName }
 
     $IncludeFlags = @(
         "-I$IncludeDir"
@@ -99,12 +99,12 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildAssembler" ) -OR ( $mode -eq "bui
         if ($LASTEXITCODE -ne 0) {Write-Error "Error compiling $_";$ErrorCode = 1}
     })
 
-    # Compiling resources into a windows resource file:
-    Write-Host "Preparing resources..."
-    windres `
-        $Resources `
-        -O coff `
-        -o $ResourcesObj
+    # # Compiling resources into a windows resource file:
+    # Write-Host "Preparing resources..."
+    # windres `
+    #     $Resources `
+    #     -O coff `
+    #     -o $ResourcesObj
 
     [array]$Objs        = Get-ChildItem     "$ObjLocal\*.obj"   | ForEach-Object { $_.FullName }
 
@@ -130,7 +130,7 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildEmulator" ) -OR ( $mode -eq "buil
     # Emulator layer:
     $SrcDir             = Join-Path         $EmulatorDir        "src"
     $IncludeDir         = Join-Path         $EmulatorDir        "include"
-    $ResourceDir        = Join-Path         $EmulatorDir        "resources"
+    #$ResourceDir        = Join-Path         $EmulatorDir        "resources"
 
     $ObjLocal           = Join-Path         $ObjDir             $Emulator
 
@@ -144,7 +144,7 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildEmulator" ) -OR ( $mode -eq "buil
     New-Item -Type Directory -Force -Path   $SrcDir             | Out-Null
     New-Item -Type Directory -Force -Path   $IncludeDir         | Out-Null
     New-Item -Type Directory -Force -Path   $SharedDir          | Out-Null
-    New-Item -Type Directory -Force -Path   $ResourceDir        | Out-Null
+    #New-Item -Type Directory -Force -Path   $ResourceDir        | Out-Null
 
     New-Item -Type Directory -Force -Path   $ObjLocal           | Out-Null
 

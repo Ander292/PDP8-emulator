@@ -80,7 +80,7 @@ DEFINE_INSTR(bun){
             regState->MAR = GET_OPERAND(regState->MBR);
             break;
         case 1: // Loading the address itself
-            regState->MBR = memory[regState->MAR];
+            regState->MBR = GET_OPERAND(memory[regState->MAR]);
             break;
         case 2: // Loads the address of the jump into PC
             regState->PC = GET_OPERAND(regState->MBR);

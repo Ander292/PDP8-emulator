@@ -1,0 +1,37 @@
+;; Inicijalizacija svih elemenata niza na neki broj
+
+;; Inicijalizacija brojača
+200 CLA             ;; Čistim akumulator
+201 STA 298         ;; Resetujem brojač
+;; Petlja
+;; Provjera uslova (i < len) => (len - i > 0) => (-i + len > 0)
+202 LDA 298         ;; Učitavam brojač
+203 CMA             ;; Negiram akumulator
+204 ADD 299         ;; Sabiram dužinu
+205 SPA             ;; Ako je akumulator pozitivan preskačem
+206 BUN 216         ;; Skok na kraj
+;; Tijelo petlje
+207 LDA 297         ;; Učitavam adresu prvog
+208 ADD 298         ;; Dodajem brojač
+209 STA 296         ;; Pripremam za indirekciju
+210 LDA 295         ;; Učitavam broj
+211 STA*296         ;; Čuvam broj na adresu koja je upisana na 296
+;; Inkrement
+212 LDA 298         ;; Učitavam brojač
+213 INC             ;; Uvećavam brojač
+214 STA 298         ;; Čuvam brojač
+215 BUN 202         ;; Skok na provjeru uslova
+;; Kraj petlje
+216 HLT             ;; Kraj programa
+
+
+
+295 DEC 67          ;; Broj koji postavlja
+296 DEC 0           ;; Za indirekciju
+297 DEC 300         ;; Adresa prvog elementa
+298 DEC 0           ;; Brojač
+299 DEC 10          ;; Dužina niza
+;300 ???             ;; Prvi element
+;...
+;...
+;310 ???             ;; Posljednji element

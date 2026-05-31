@@ -12,7 +12,7 @@
 
 typedef struct lineOg{
     short address;
-    char name[4];
+    char name[5];
     unsigned short operand;
 } lineOg;
 

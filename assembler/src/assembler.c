@@ -1,4 +1,4 @@
-#include "main.h"
+#include "assembler.h"
 #include "shared.c"
 
 
@@ -34,14 +34,20 @@ lineT TranslateInstruction(lineOg l){
 
 lineOg LoadLine(char *src){
     char TempBuffer[16]; int pos = 0;
+    int srcPos = 0;
 
-    while(src[pos] != '\000'){
-        if(src[pos] == ';') {
+    while(src[pos] != '\000' && pos < 16){
+        if(src[srcPos] == ';') {
             pos++;
+            srcPos++;
             break;
         }
-        TempBuffer[pos] = src[pos];
-        pos++;
+        
+        TempBuffer[pos++] = src[srcPos];
+
+        if(src[srcPos++] == '*'){
+            TempBuffer[pos++] = ' ';
+        }
     }
     TempBuffer[pos] = '\000';
     //puts(TempBuffer);
@@ -54,7 +60,8 @@ lineOg LoadLine(char *src){
     else Result.operand = (unsigned short)strtoul(OperandBuffer, NULL, 10);
 
     for(int i = 0; Result.name[i] != '\000'; i++){
-        Result.name[i] &= 0xDF; // toUpper
+        if(Result.name[i] != '*')
+            Result.name[i] &= 0xDF; // toUpper
     }
 
     return Result;

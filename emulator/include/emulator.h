@@ -12,7 +12,7 @@
 #define GET_OPERAND(memWord) (((instr)((word)memWord)).parts.opernd)
 #define GET_TYPE(memWord) (GET_INSTRUCTION(memWord) != 0x7 ? MEMORY_INSTRUCTION : (GET_INSTRUCTION(memWord) & 0x8 ? IO_INSTRUCTION : REGISTER_INSTRUCTION))
 
-#define GET_CYCLE(f, r) ((f) << 1 + (r))
+#define GET_CYCLE(f, r) (((f) << 1) + (r))
 #define CYCLE_FETCH 0
 #define CYCLE_INDIRECT 1
 #define CYCLE_EXECUTE 2
