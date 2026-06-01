@@ -113,19 +113,23 @@ DEFINE_INSTR(bsa){
             break;
     }
 }
+/*
+    The Increment Skip Zero instruction. I do not know how would this instruction be properly implemented in only 4 tacts so here is this 
+    (It increments MBR if that is possible)
+*/
 DEFINE_INSTR(isz){
     switch(regState->SC){
         case 0: // Loading the operand address into MAR
             regState->MAR = GET_OPERAND(regState->MBR);
             break;
-        case 1: // Loading the operand itself from the address in MAR
-            regState->MBR = memory[regState->MAR];
+        case 1: // Loading the operand itself from the address in MAR and increments it by one
+            regState->MBR = memory[regState->MAR] + 1;
             break;
-        case 2: // Loading the MBR and increments it by one
-            regState->ACC = regState->MBR + 1;
+        case 2: // Sends the incremented operand back into memory
+            memory[regState->MAR] = regState->MBR;
             break;
-        case 3: // Skipping one instruction if ACC is zero and going to FETCH cycle
-            if(regState->ACC == 0) regState->PC++;
+        case 3: // Skipping one instruction if MBR is zero and going to FETCH cycle
+            if(regState->MBR == 0) regState->PC++;
             regState->F = 0;
             regState->R = 0;
             break;

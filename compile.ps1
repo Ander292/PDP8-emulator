@@ -1,5 +1,6 @@
 param (
-    [string]$mode = "full"
+    [string]$mode = "full",
+    [string]$codePath = "assets/in.txt"
 )
 # full, run, build
 
@@ -72,13 +73,13 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildAssembler" ) -OR ( $mode -eq "bui
         #"-Wundef"
         #"-Wstrict-overflow=5"
         "-fdiagnostics-show-option"
-        "-g"
-        #"-O"
+        #"-g"
+        "-O1"
     )
 
     $LinkerFlags = @(
         "-pedantic"
-        "-g"
+        #"-g"
         #"-Wl,-Map=outputP.map"
         #"-m64"
         #"-mwindows"
@@ -165,13 +166,13 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildEmulator" ) -OR ( $mode -eq "buil
         #"-Wundef"
         #"-Wstrict-overflow=5"
         "-fdiagnostics-show-option"
-        "-g"
-        #"-O2"
+        #"-g"
+        "-O2"
     )
 
     $LinkerFlags = @(
         "-pedantic"
-        "-g"
+        #"-g"
         #"-shared"
         #"-Wl,-Map=outputG.map"
         #"-Wl,--out-implib,libmy_lib.dll.a"
@@ -215,12 +216,12 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildEmulator" ) -OR ( $mode -eq "buil
     Write-Host "Emulator compilation sucessful!"
 }
 
-if ( ( $mode -eq "full" ) -OR ( $mode -eq "reloadAssets" ) ) {
-    Write-Host "Copying assets..."
-    $TargetAssetsDir = Join-Path $BinDir "assets"
-    Remove-Item $TargetAssetsDir -Recurse -Force -ErrorAction SilentlyContinue
-    Copy-Item $AssetsDir $TargetAssetsDir -Recurse -Force
-}
+# if ( ( $mode -eq "full" ) -OR ( $mode -eq "reloadAssets" ) ) {
+#     Write-Host "Copying assets..."
+#     $TargetAssetsDir = Join-Path $BinDir "assets"
+#     Remove-Item $TargetAssetsDir -Recurse -Force -ErrorAction SilentlyContinue
+#     Copy-Item $AssetsDir $TargetAssetsDir -Recurse -Force
+# }
 
 if ( ( $mode -eq "full" ) -OR ( $mode -eq "runAssembler" ) ) {
     Write-Host "Running program..."
@@ -230,4 +231,14 @@ if ( ( $mode -eq "full" ) -OR ( $mode -eq "runAssembler" ) ) {
 if ( ( $mode -eq "full" ) -OR ( $mode -eq "runEmulator" ) ) {
     Write-Host "Running program..."
     & "$OutputExeE" "assets/out.bin" 200 -p "assets/pre.csv" -c "assets/out.csv"
+}
+
+if ($mode -eq "run"){
+    $WorkDir = Join-Path $BuildDir "work/"
+    New-Item -Type Directory -Force -Path   $WorkDir             | Out-Null
+
+    Write-Host "Assembling..."
+    & "$OutputExeA" $codePath "$WorkDir/out.bin"
+    Write-Host "Running..."
+    & "$OutputExeE" "$WorkDir/out.bin" 200 -p "$WorkDir/pre.csv" -c "$WorkDir/post.csv"
 }

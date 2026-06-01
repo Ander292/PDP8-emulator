@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/build/bin/assembler.exe",
             "args": [
                 "assets/primjerA.pdp",
-                "assets/out.bin"
+                "build/work/outDBG.bin"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

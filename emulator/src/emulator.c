@@ -80,6 +80,8 @@ int memoryDumpCsv(const char *outPath, const word *mem, size_t size){
         if(instrToStr(buffer, memory[i]) == -1) errcode++;
         fprintf(outF, "%u,DEC %d,HEX %x,%s\n", i, memory[i], memory[i], buffer);
     }
+
+    fclose(outF);
     return errcode;
 }
 
@@ -91,7 +93,7 @@ int memoryDumpBin(const char *outPath, const word *mem, size_t size){
     }
 
     fwrite(mem, sizeof(word), size, outF);
-
+    fclose(outF);
     return 0;
 }
 

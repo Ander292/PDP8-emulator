@@ -50,7 +50,6 @@ lineOg LoadLine(char *src){
         }
     }
     TempBuffer[pos] = '\000';
-    //puts(TempBuffer);
     
     lineOg Result;
     char OperandBuffer[5];
@@ -80,9 +79,7 @@ lineT *Assemble(char *str, size_t size, int *instrCount){
     while(cPtr != NULL){
         instr = LoadLine(cPtr);
         if(instr.name[0] != '\000'){
-            //fprintf(stdout, "Translating: %d|%s|%d\n", instr.address, instr.name, instr.operand);
             tInstr[tInsCount] = TranslateInstruction(instr);
-            //fprintf(stdout, "(%d)Result: %d\n", tInstr[tInsCount].address, tInstr[tInsCount].instr);
             tInsCount++;
         }
         cPtr = strtok(NULL, "\n");
@@ -116,6 +113,11 @@ int main(int argc, char *argv[]){
         strcpy(outPath, argv[2]);
     }
 
+    FILE *outF = fopen(outPath, "wb");
+    if(outF == NULL){
+        ErrorExit("Error creating output file");
+    }
+
     long fSize = GetFileSize(f);
 
     char *FileBuffer = malloc((fSize+1) * sizeof(char));
@@ -125,13 +127,10 @@ int main(int argc, char *argv[]){
     int InstrCount;
     lineT *instr = Assemble(FileBuffer, Feedback, &InstrCount);
 
-    FILE *outF = fopen(outPath, "wb");
     fwrite("", 1, 1, outF);
     fseek(outF, 0, SEEK_SET);
 
-    //fwrite(intr, sizeof(lineT), InstrCount, outF);
     for(int i = 0; i < InstrCount; i++){
-        //printf("Address: (%d|%x) Instruction: (%d|%x)\n", instr[i].address, instr[i].address, instr[i].instr, instr[i].instr);
         fseek(outF, instr[i].address*2, SEEK_SET);
         fwrite(&instr[i].instr, sizeof(unsigned short), 1, outF);
     }
