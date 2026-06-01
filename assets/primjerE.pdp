@@ -1,0 +1,24 @@
+;; Potprogram za zbir 2 broja
+
+
+;; Kod glavnog programa
+200 LDA 250 ;; Učitavam jedan broj
+201 STA 298 ;; Šaljem
+202 LDA 251 ;; Učitavam drugi broj
+203 STA 299 ;; Šaljem
+204 BSA 300 ;; Branch and save return address, pozivam potprogram
+205 STA 252 ;; Čuvam rezultat
+206 HLT     ;; Kraj
+
+250 DEC 16  ;; Prvi broj
+251 DEC 17  ;; Drugi broj
+252 DEC 0   ;; Rezultat
+
+
+;; Kod potprograma
+298 DEC 0   ;; Drugi argument
+299 DEC 0   ;; Prvi argument
+300         ;; Potprogram za sabiranje
+301 LDA 298 ;; Učitavam jedan argument
+302 ADD 299 ;; Sabiram drugi
+303 BUN*300 ;; Vraćam kontrolu pozivaocu

@@ -1,0 +1,38 @@
+;; a := 0
+;; for a := 0 to 9 do
+;; begin
+;; z := x
+;; x := x + 1
+;; end;
+
+;; a = 0
+100 CLA     ;; acc = 0
+101 STA 202 ;; Šaljem 0 u a
+;; Petlja
+;; Provjera uslova (a <= 9) => (-9 + a <= 0) ==> (-9 + a > 0) za break
+102 LDA 203 ;; Konstanta -9
+103 ADD 202 ;; Sabiram a
+104 SPA     ;; Ako je akumulator pozitivan preskačem
+105 BUN 111 ;; Skok na tijelo petlje
+106 BUN 117 ;; Skok na kraj
+;; Inkrement
+107 LDA 202 ;; Učitavam brojač
+108 INC     ;; Inkrementiram akumulator
+109 STA 202 ;; Čuvam brojač
+110 BUN 102 ;; Skok na provjeru uslova
+;; Tijelo petlje
+;; z = x
+111 LDA 200 ;; Učitavam x
+112 STA 201 ;; Šaljem ga u z
+;; x++
+113 LDA 200 ;; Učitavam x
+114 INC     ;; Uvećavam ga
+115 STA 200 ;; Čuvam x
+116 BUN 107 ;; Skok na inkrement
+;; Kraj petlje
+117 HLT     ;; Kraj programa
+
+200 DEC 20  ;; x
+201 DEC 11  ;; z
+202 DEC 0   ;; a
+203 DEC -9  ;; Konstanta

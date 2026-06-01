@@ -1,1 +1,0 @@
-void MemoryInstr(int sc, &regs);

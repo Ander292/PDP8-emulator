@@ -1,0 +1,35 @@
+;; (x + 4 != y * 2) && (x < 10)
+;; then z = x + y
+;; else z = 0
+
+;; Provjera prve polovine uslova (x + 4 != y * 2) => (x + 4 - (y << 1) != 0) => 
+;; => (-(y << 1) + x + 4)
+200 LDA 252 ;; Učitavam y
+201 CIL     ;; Shift u lijevo (množenje sa 2)
+202 CMA     ;; Komplementiram akumulator
+203 ADD 251 ;; Sabiram x
+204 ADD 253 ;; Sabiram konstantu 4
+205 SZA     ;; Ukoliko je akumulator nula onda preskače skok na else dio
+206 BUN 208 ;; Skok na drugi dio uslova
+207 BUN 216 ;; Skok na else dio
+;; Drugi dio uslova (x < 10) => (x - 10 < 0)
+208 LDA 251 ;; Učitavam x
+209 ADD 254 ;; Sabiram -10
+210 SNA     ;; Ako je akumulator negativan preskačem skok na else dio
+211 BUN 216 ;; Skok na else dio
+;; Then blok (ukoliko su uslovi tačni)
+212 LDA 251 ;; Učitavam x
+213 ADD 252 ;; Sabiram y
+214 STA 250 ;; Čuvam rezultat
+215 BUN 217 ;; Skok na kraj (da se ne bi izvršio else blok)
+;; Else blok
+216 CLA     ;; Stavljam akumulator na 0
+217 STA 250 ;; Čuvam rezultat
+;; Kraj grananja
+218 HLT     ;; Kraj
+
+250 DEC 0   ;; z
+251 DEC 9   ;; x
+252 DEC 17  ;; y
+253 DEC 4   ;; Konstanta
+254 DEC -10 ;; Konstanta

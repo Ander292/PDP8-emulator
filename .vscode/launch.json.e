@@ -7,12 +7,12 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/bin/emulator.exe",
             "args": [
-                "assets/out.bin",
+                "build/work/out.bin",
                 "200",
                 "-p",
                 "pre.csv",
                 "-c",
-                "memDump.csv"
+                "post.csv"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

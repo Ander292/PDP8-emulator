@@ -1,0 +1,46 @@
+;; Kopiranje iz niza 1 u niz 2
+
+
+;; Inicijalizacija brojača obavljena u data segmentu
+;; Petlja
+;; Provjera uslova (CNT < LEN) => (LEN - CNT > 0)
+195 LDA 297 ;; Učitavam brojač
+196 CMA     ;; Komplementiram akumulator
+197 ADD 299 ;; Sabiram dužinu
+198 SPA     ;; Ako je pozitivan preskačem
+199 BUN 213 ;; Kraj petlje
+;; Adresa elementa iz source niza
+200 LDA 298 ;; Učitavam adresu prvog
+201 ADD 297 ;; Sabiram brojač
+202 STA 295 ;; Čuvam
+;; Adresa elementa iz dest niza
+203 LDA 298 ;; Učitavam adresu prvog člana
+204 ADD 299 ;; Sabiram dužinu niza
+205 ADD 297 ;; Sabiram brojač
+206 STA 296 ;; Čuvam
+;; Prepisivanje
+207 LDA*295 ;; Učitavam element iz source niza
+208 STA*296 ;; Čuvam element na adresu sačuvanu na adresi 296
+;; Inkrement
+209 LDA 297 ;; Učitavam brojač
+210 INC     ;; Inkrementiram akumulator
+211 STA 297 ;; Čuvam brojač
+212 BUN 195 ;; Skok na provjeru uslova
+
+213 HLT
+
+295 DEC ??? ;; Za indirekciju src
+296 DEC ??? ;; Za indirekciju dest
+297 DEC 0   ;; Brojač
+298 DEC 300 ;; Adresa prvog člana
+299 DEC 10  ;; Dužina nizova (broj članova)
+;; SrcArr
+300 DEC 67
+301 DEC 88
+...
+...
+309 DEC 99
+;; DestArr
+310 DEC ???
+...
+319 DEC ???
