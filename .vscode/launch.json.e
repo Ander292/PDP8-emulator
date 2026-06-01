@@ -8,7 +8,11 @@
             "program": "${workspaceFolder}/build/bin/emulator.exe",
             "args": [
                 "assets/out.bin",
-                "200"
+                "200",
+                "-p",
+                "pre.csv",
+                "-c",
+                "memDump.csv"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -76,21 +76,16 @@ lineT *Assemble(char *str, size_t size, int *instrCount){
 
     char *cPtr = strtok(str, "\n");
     lineOg instr = LoadLine(cPtr);
-    if(instr.name[0] != '\000'){
-        fprintf(stdout, "Translating: %d|%s|%d\n", instr.address, instr.name, instr.operand);
-        tInstr[tInsCount] = TranslateInstruction(instr);
-        fprintf(stdout, "(%d)Result: %d\n", tInstr[tInsCount].address, tInstr[tInsCount].instr);
-        tInsCount++;
-    }
 
-    while((cPtr = strtok(NULL, "\n")) != NULL){
+    while(cPtr != NULL){
         instr = LoadLine(cPtr);
         if(instr.name[0] != '\000'){
-            fprintf(stdout, "Translating: %d|%s|%d\n", instr.address, instr.name, instr.operand);
+            //fprintf(stdout, "Translating: %d|%s|%d\n", instr.address, instr.name, instr.operand);
             tInstr[tInsCount] = TranslateInstruction(instr);
-            fprintf(stdout, "(%d)Result: %d\n", tInstr[tInsCount].address, tInstr[tInsCount].instr);
+            //fprintf(stdout, "(%d)Result: %d\n", tInstr[tInsCount].address, tInstr[tInsCount].instr);
             tInsCount++;
         }
+        cPtr = strtok(NULL, "\n");
     }
 
     *instrCount = tInsCount;
@@ -100,14 +95,25 @@ lineT *Assemble(char *str, size_t size, int *instrCount){
 int main(int argc, char *argv[]){
     setlocale(LC_ALL, ".UTF8");
 
-    if(argc != 2){
-        printf("Usage: %s <FilePath>", argv[0]);
+    if(argc != 2 && argc != 3){
+        printf("Usage: %s <FilePath> [OutPath]\n"
+                "If [OutPath] is not given then the program will create <FilePath>.bin", argv[0]);
         return 1;
     }
     
     FILE *f = fopen(argv[1], "r");
     if(f == NULL){
         ErrorExit("Couldn't open file");
+    }
+
+    char outPath[256];
+    if(argc == 2){
+        nameInfo ni = separateFileName(argv[1]);
+        joinRoot(outPath, ni.path, ni.name);
+        strcat(outPath, ".bin");
+    }
+    else{
+        strcpy(outPath, argv[2]);
     }
 
     long fSize = GetFileSize(f);
@@ -119,13 +125,13 @@ int main(int argc, char *argv[]){
     int InstrCount;
     lineT *instr = Assemble(FileBuffer, Feedback, &InstrCount);
 
-    FILE *outF = fopen("assets/out.bin", "wb");
+    FILE *outF = fopen(outPath, "wb");
     fwrite("", 1, 1, outF);
     fseek(outF, 0, SEEK_SET);
 
     //fwrite(intr, sizeof(lineT), InstrCount, outF);
     for(int i = 0; i < InstrCount; i++){
-        printf("Address: (%d|%x) Instruction: (%d|%x)\n", instr[i].address, instr[i].address, instr[i].instr, instr[i].instr);
+        //printf("Address: (%d|%x) Instruction: (%d|%x)\n", instr[i].address, instr[i].address, instr[i].instr, instr[i].instr);
         fseek(outF, instr[i].address*2, SEEK_SET);
         fwrite(&instr[i].instr, sizeof(unsigned short), 1, outF);
     }

@@ -7,7 +7,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/bin/assembler.exe",
             "args": [
-                "assets/primjerA.pdp"
+                "assets/primjerA.pdp",
+                "assets/out.bin"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

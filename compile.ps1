@@ -224,10 +224,10 @@ if ( ( $mode -eq "full" ) -OR ( $mode -eq "reloadAssets" ) ) {
 
 if ( ( $mode -eq "full" ) -OR ( $mode -eq "runAssembler" ) ) {
     Write-Host "Running program..."
-    & "$OutputExeA" "assets/in.txt"
+    & "$OutputExeA" "assets/in.txt" "assets/out.bin"
 }
 
 if ( ( $mode -eq "full" ) -OR ( $mode -eq "runEmulator" ) ) {
     Write-Host "Running program..."
-    & "$OutputExeE" "assets/out.bin" 200
+    & "$OutputExeE" "assets/out.bin" 200 -p "assets/pre.csv" -c "assets/out.csv"
 }

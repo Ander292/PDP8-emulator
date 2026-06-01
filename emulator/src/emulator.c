@@ -91,6 +91,8 @@ int memoryDumpBin(const char *outPath, const word *mem, size_t size){
     }
 
     fwrite(mem, sizeof(word), size, outF);
+
+    return 0;
 }
 
 int initRegisters(pRegisters regState, word startAddress){
@@ -98,13 +100,42 @@ int initRegisters(pRegisters regState, word startAddress){
     regState->S = 1;
 }
 
+int processArgs(int argc, char *argv[], char *outCsv, char *outBin, char *outPre){
+    int result = 0;
+    for(int i = 0; i < argc; i++){
+        if(!strcmp(argv[i], "-c")){
+            strcpy(outCsv, argv[++i]);
+        }
+        if(!strcmp(argv[i], "-b")){
+            strcpy(outBin, argv[++i]);
+        }
+        if(!strcmp(argv[i], "-p")){
+            strcpy(outPre, argv[++i]);
+        }
+        if(!strcmp(argv[i], "-n")){
+            result = 1;
+        }
+    }
+
+    return result;
+}
+
 int main(int argc, char *argv[]){
     setlocale(LC_ALL, ".UTF8");
 
-    if(argc != 3){
-        printf("Usage: %s <FilePath> <StartingAddress>", argv[0]);
+    if(argc < 3){
+        printf("Usage: %s <FilePath> <StartingAddress> [-p <outPreCsv> -c <outCsv> -b <outBin> -n]\n"
+                "-p <outPreCsv> is the path of the csv memory dump before the program starts, useful for seeing if the program is properly assembled\n"
+                "-c <outCsv> is the path of the post run csv memory dump\n"
+                "-b <outBin> is the path of the post run binary memory dump (the memory is written to a file in the same way it was kept internally)\n"
+                "-n is passed to prevent the emulator from actually running the program (maybe useful if used together with -p flag)", argv[0]);
         return 1;
     }
+    char outCsv[256] = {0};
+    char outBin[256] = {0};
+    char outPre[256] = {0};
+
+    int dontRun = processArgs(argc, argv, outCsv, outBin, outPre);
 
     FILE *f = fopen(argv[1], "rb");
     if(f == NULL) ErrorExit("Fatal error opening bin file!");
@@ -114,7 +145,15 @@ int main(int argc, char *argv[]){
 
     initRegisters(&regs, atoi(argv[2]));
 
-    memoryDumpCsv("assets/pre.csv", memory, MEMORY_SIZE);
+    if(outPre[0] != 0) {
+        int result = memoryDumpCsv(outPre, memory, MEMORY_SIZE);
+        if(result != -1)
+            printf("Wrote pre-run memDump(%d) to path: %s\n", result, outPre);
+    }
+    if(dontRun) {
+        printf("The emulator did not run.\n");
+        return 0;
+    }
 
     for(regs.SC = 0; regs.S == 1; regs.SC = (regs.SC + 1) % 4){
         switch(GET_CYCLE(regs.F, regs.R)){
@@ -221,8 +260,15 @@ int main(int argc, char *argv[]){
         }
     }
 
-    memoryDumpBin("assets/memDump.bin", memory, MEMORY_SIZE);
-    memoryDumpCsv("assets/memDump.csv", memory, MEMORY_SIZE);
+    if(outBin[0] != 0) {
+        if(!memoryDumpBin(outBin, memory, MEMORY_SIZE))
+            printf("Wrote post-run binary memDump to path: %s\n", outBin);
+    }
+    if(outCsv[0] != 0) {
+        int result = memoryDumpCsv(outCsv, memory, MEMORY_SIZE);
+        if(result != -1)
+            printf("Wrote post-run csv memDump(%d) to path: %s\n", result, outCsv);
+    }
     
     return 0;
 }
