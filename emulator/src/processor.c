@@ -62,10 +62,10 @@ void formatAndDisplayOutput(registers *regState, registers *oldState, word *memo
     instrToStr(instrName, memory[regState->PC-1]);
     sprintf(buffer,
         ESC_CLEAR_LINE"c%d t%d: %s\n"
-        "PC:    %-4d\tCurrent: %s\n"
-        "ACC:   %-8d\tE: %1d\n"
-        "MBR:   %-8d\n"
-        "IOPR: %s%-2d\tMAR %-8d",
+        ESC_CLEAR_LINE"PC:    %-4d\tCurrent: %s\n"
+        ESC_CLEAR_LINE"ACC:   %-8d\tE: %1d\n"
+        ESC_CLEAR_LINE"MBR:   %-8d\n"
+        ESC_CLEAR_LINE"IOPR: %s%-2d\tMAR %-8d",
         cycle, regState->SC, GET_CYCLE_STRING(cycle),
         regState->PC, instrName,
         regState->ACC, regState->E, regState->MBR,
