@@ -4,34 +4,6 @@
 /*
     Defines for all instructions that are currently in use.
 */
-#define AND 0x0U
-#define ADD 0x1U
-#define LDA 0x2U
-#define STA 0x3U
-#define BUN 0x4U
-#define BSA 0x5U
-#define ISZ 0x6U
-
-#define IAND 0x8U
-#define IADD 0x9U
-#define ILDA 0xAU
-#define ISTA 0xBU
-#define IBUN 0xCU
-#define IBSA 0xDU
-#define IISZ 0xEU
-
-#define CLA 0x7800U
-#define CLE 0x7400U
-#define CMA 0x7200U
-#define CME 0x7100U
-#define CIR 0x7080U
-#define CIL 0x7040U
-#define INC 0x7020U
-#define SPA 0x7010U
-#define SNA 0x7008U
-#define SZA 0x7004U
-#define SZE 0x7002U
-#define HLT 0x7001U
 
 typedef struct translation_info{
     char name[5];

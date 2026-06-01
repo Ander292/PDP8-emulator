@@ -12,12 +12,13 @@
                 "-p",
                 "pre.csv",
                 "-c",
-                "post.csv"
+                "post.csv",
+                "-d"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": false,
+            "externalConsole": true,
             "MIMode": "gdb",
             "miDebuggerPath": "gdb",
             "setupCommands": [

@@ -73,13 +73,13 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildAssembler" ) -OR ( $mode -eq "bui
         #"-Wundef"
         #"-Wstrict-overflow=5"
         "-fdiagnostics-show-option"
-        #"-g"
-        "-O1"
+        "-g"
+        #"-O1"
     )
 
     $LinkerFlags = @(
         "-pedantic"
-        #"-g"
+        "-g"
         #"-Wl,-Map=outputP.map"
         #"-m64"
         #"-mwindows"
@@ -167,7 +167,7 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildEmulator" ) -OR ( $mode -eq "buil
         #"-Wstrict-overflow=5"
         "-fdiagnostics-show-option"
         "-g"
-        "-O1"
+        #"-O1"
     )
 
     $LinkerFlags = @(
@@ -230,7 +230,7 @@ if ( ( $mode -eq "full" ) -OR ( $mode -eq "runAssembler" ) ) {
 
 if ( ( $mode -eq "full" ) -OR ( $mode -eq "runEmulator" ) ) {
     Write-Host "Running program..."
-    & "$OutputExeE" "assets/out.bin" 200 -p "assets/pre.csv" -c "assets/out.csv"
+    & "$OutputExeE" "assets/out.bin" 200 -p "assets/pre.csv" -c "assets/out.csv" -d
 }
 
 if ($mode -eq "run"){
@@ -240,5 +240,5 @@ if ($mode -eq "run"){
     Write-Host "Assembling..."
     & "$OutputExeA" $codePath "$WorkDir/out.bin"
     Write-Host "Running..."
-    & "$OutputExeE" "$WorkDir/out.bin" 200 -p "$WorkDir\pre.csv" -c "$WorkDir\post.csv"
+    & "$OutputExeE" "$WorkDir/out.bin" 200 -p "$WorkDir\pre.csv" -c "$WorkDir\post.csv" -d
 }
