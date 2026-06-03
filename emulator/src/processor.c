@@ -50,15 +50,15 @@ void formatLimiter(char *buffer, char c, int size){
 }
 
 void formatAndDisplayOutput(registers *regState, registers *oldState, word *memory){
-    consoleInfo ci = getConsoleInfo();
-    char buffer[20480];
+    char buffer[256];
     /*
-        Here the register and memory info is inserted
+        Here the register and memory info is formated and printed
     */
 
-    char tempBuffer[400];
-    char instrName[400];
-    word cycle = GET_CYCLE(regState->F, regState->R);
+    char instrName[32];
+    word cycle = (regState->SC == 3 ? 
+        GET_CYCLE(oldState->F, oldState->R) : 
+        GET_CYCLE(regState->F, regState->R));
     instrToStr(instrName, memory[regState->PC-1]);
     sprintf(buffer,
         ESC_CLEAR_LINE"c%d t%d: %s\n"
@@ -80,7 +80,7 @@ void formatAndDisplayOutput(registers *regState, registers *oldState, word *memo
 
 void processor(registers *regState, word *memory, int debugMode){
     int step = ' ';
-    registers *oldState = NULL;
+    registers oldState = {0};
     for(regState->SC = 0; regState->S == 1; regState->SC = (regState->SC + 1) % 4){
         switch(GET_CYCLE(regState->F, regState->R)){
             case CYCLE_FETCH:{
@@ -184,19 +184,21 @@ void processor(registers *regState, word *memory, int debugMode){
                 }
             } break;
         }
-        oldState = regState;
         if(debugMode){
-            while((step != '\n' && step != '\r' && step != ' ')) {
-                step = pollInput(67);
-                //printf("%c\n", step);
+            while((step != ' ')) {
+                step = getchar();
+                if((step | 0x20) == 's' || (step | 0x20) == 'c' || (step | 0x20) == 'p')
+                    goto END;
             }
             step = 0;
             //if(GET_CYCLE(regState->F, regState->R) == CYCLE_FETCH && regState->SC == 0) 
                 //printf("%d\n", regState->PC);
-            formatAndDisplayOutput(regState, oldState, memory);
+            formatAndDisplayOutput(regState, &oldState, memory);
         }
+        oldState = *regState;
     }
+    END:
     puts(ESC_CLEAR_SCREEN);
-    puts("Program ended execution!");
+    puts("Program execution ended!");
     getchar();
 }

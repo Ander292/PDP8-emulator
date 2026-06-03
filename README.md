@@ -24,3 +24,5 @@ I have not implemented IO operations yet so the only way to view the result of t
 Looking at binary memory dumps is anoying so I made it output a csv file as well.
 
 Run the program argless to get what arguments are available and what do they do.
+
+Currently the debugger doesnt work in linux for now

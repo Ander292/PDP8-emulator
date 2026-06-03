@@ -5,26 +5,14 @@
 
 #define WINDOWS
 
-#if defined WINDOWS
-#include <windows.h>
-DWORD oldMode;
-
-consoleInfo getConsoleInfo(){
-    consoleInfo result = {0};
-    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_SCREEN_BUFFER_INFO si = {0};
-    GetConsoleScreenBufferInfo(hStdout, &si);
-
-    result.height = si.dwMaximumWindowSize.Y;
-    result.width = si.dwMaximumWindowSize.X;
-
-    return result;
-}
-
 void moveCursorPos(int x, int y){
     printf(ESC_SEQ"%d;%dH", y, x);
     fflush(stdout);
 }
+
+#if defined WINDOWS
+#include <windows.h>
+DWORD oldMode;
 
 void enterRawMode(){
     DWORD mode;
@@ -43,26 +31,15 @@ void leaveRawMode(){
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), oldMode);
 }
 
-void sleep(unsigned long miliseconds){
-    Sleep((DWORD)miliseconds);
-}
-
-// Always blocks for now
-int pollInput(int block){
-    int result = 0;
-    DWORD feedback = 0;
-    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
-
-    ReadConsoleA(hStdin, &result, 1, &feedback, NULL);
-
-    return result;
-}
-
 #elif defined LINUX
+#include <termios.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
-
-consoleInfo getConsoleInfo(){
+void enterRawMode(){
 
 }
+
+void leaveRawMode(){
+    
+}
+
 #endif

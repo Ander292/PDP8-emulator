@@ -96,7 +96,8 @@ int main(int argc, char *argv[]){
                 "-p <outPreCsv> is the path of the csv memory dump before the program starts, useful for seeing if the program is properly assembled\n"
                 "-c <outCsv> is the path of the post run csv memory dump\n"
                 "-b <outBin> is the path of the post run binary memory dump (the memory is written to a file in the same way it was kept internally)\n"
-                "-n is passed to prevent the emulator from actually running the program (maybe useful if used together with -p flag)", argv[0]);
+                "-n is passed to prevent the emulator from actually running the program (maybe useful if used together with -p flag)\n"
+                "-d is passed to run in debug mode", argv[0]);
         return 1;
     }
     char outCsv[256] = {0};
@@ -122,11 +123,11 @@ int main(int argc, char *argv[]){
         return 0;
     }
 
-    enterRawMode();
+    if(dontRun) enterRawMode();
     registers regs = {0};
     initRegisters(&regs, atoi(argv[2]));
     processor(&regs, memory, dontRun);
-    leaveRawMode();
+    if(dontRun) leaveRawMode();
 
     if(outBin[0] != 0) {
         if(!memoryDumpBin(outBin, memory, MEMORY_SIZE))
