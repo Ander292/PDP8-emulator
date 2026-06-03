@@ -1,13 +1,34 @@
 compile() {
+    
     local CodeDir="$1"
     local Name="$2"
 
     local SrcDir="$CodeDir/src"
     local IncludeDir="$CodeDir/include"
-    
     local ObjLocal="$ObjDir/$Name"
 
-    Sources=( * )
+    local Sources=()
+    local ObjC=()
+
+    for file in $SrcDir/*.c;do
+        Sources+=(`basename "$file"`)
+        ObjC+=(`basename "$file" .c`.obj)
+    done
+
+    mkdir $SrcDir 2> /dev/null
+    mkdir $IncludeDir 2> /dev/null
+    mkdir $ObjLocal 2> /dev/null
+
+    local -n CompFlags="$3"
+    local -n LinkFlags="$4"
+
+    #echo ${CompFlags[@]}
+    #echo ${LinkFlags[@]}
+
+    i=0
+    for file in ${Sources[@]};do
+        
+    done
 }
 
 mode="$full"
@@ -44,11 +65,55 @@ mkdir "$ObjDir" 2> /dev/null
 mkdir "$AssemblerDir" 2> /dev/null
 mkdir "$EmulatorDir" 2> /dev/null
 mkdir "$AssetsDir" 2> /dev/null
+mkdir "$SharedDir" 2> /dev/null
 
 case "$mode" in
     "build")
-        compile "$AssemblerDir" "$Assembler"
-        compile "$EmulatorDir" "$Emulator"
+        CompilationFlags=(
+            #"-Wall"
+            #"-pedantic"
+            "-Wextra"
+            #"-Wconversion"
+            #"-Wundef"
+            #"-Wstrict-overflow=5"
+            "-fdiagnostics-show-option"
+            "-g"
+            #"-O1"
+        )
+
+        LinkerFlags=(
+            "-pedantic"
+            "-g"
+            #"-shared"
+            #"-Wl,-Map=outputG.map"
+            #"-Wl,--out-implib,libmy_lib.dll.a"
+            #"-m64"
+            #"-mwindows"
+        )
+        compile "$AssemblerDir" "$Assembler" "CompilationFlags" "LinkerFlags"
+
+        CompilationFlags=(
+            #"-Wall"
+            #"-pedantic"
+            "-Wextra"
+            #"-Wconversion"
+            #"-Wundef"
+            #"-Wstrict-overflow=5"
+            "-fdiagnostics-show-option"
+            "-g"
+            #"-O1"
+        )
+
+        LinkerFlags=(
+            "-pedantic"
+            "-g"
+            #"-shared"
+            #"-Wl,-Map=outputG.map"
+            #"-Wl,--out-implib,libmy_lib.dll.a"
+            #"-m64"
+            #"-mwindows"
+        )
+        compile "$EmulatorDir" "$Emulator" "CompilationFlags" "LinkerFlags"
         ;;
     "run")
 
