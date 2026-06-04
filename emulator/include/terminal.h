@@ -25,8 +25,6 @@ typedef struct consoleInfo{
 
 consoleInfo getConsoleInfo();
 
-void sleep(unsigned long miliseconds);
-int pollInput(int block);
 void moveCursorPos(int x, int y);
 int instrToStr(char *outBuffer, word memoryWord);
 #endif
