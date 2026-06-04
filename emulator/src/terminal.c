@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#define LINUX
+#define WINDOWS
 
 void moveCursorPos(int x, int y){
     printf(ESC_SEQ"%d;%dH", y, x);
