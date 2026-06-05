@@ -256,7 +256,7 @@ DEFINE_INSTR(inc){
 DEFINE_INSTR(spa){
     switch(regState->SC){
         case 0: // Skipping one instruction if accumulator is possitive (if MSB is 0)
-            if(!(regState->ACC & (1 << 15))) regState->PC++;
+            if(!(regState->ACC & (1 << 15)) && regState->ACC != 0) regState->PC++;
             break;
         case 1:
         case 2:

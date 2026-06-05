@@ -198,7 +198,7 @@ void processor(registers *regState, word *memory, int debugMode){
         oldState = *regState;
     }
     END:
-    puts(ESC_CLEAR_SCREEN);
+    if(debugMode) puts(ESC_CLEAR_SCREEN);
     puts("Program execution ended!");
-    getchar();
+    if(debugMode) getchar();
 }
