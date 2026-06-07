@@ -10,10 +10,9 @@
                 "build/work/out.bin",
                 "200",
                 "-p",
-                "pre.csv",
+                "build/work/pre.csv",
                 "-c",
-                "post.csv",
-                "-d"
+                "build/work/post.csv"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

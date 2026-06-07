@@ -1,5 +1,5 @@
 #include "emulator.h"
-#include "terminal.h"
+#include "system.h"
 
 #include <stdio.h>
 
@@ -31,6 +31,21 @@ void leaveRawMode(){
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), oldMode);
 }
 
+void sleepF(unsigned long miliseconds){
+    Sleep(miliseconds);
+}
+
+/*
+    Creates the thread and closes its handle as its not needed.
+*/
+// void threadCreate(void (*fPtr)(void), void *arg){
+//     HANDLE hThread = CreateThread(
+//         NULL, 0, fPtr,
+//         arg, 0, NULL
+//     );
+//     if(hThread) CloseHandle(hThread);
+// }
+
 #elif defined LINUX
 #include <termios.h>
 #include <unistd.h>
@@ -54,6 +69,10 @@ void leaveRawMode(){
     puts(MOVE_TO_MAIN_BUFFER);
     puts(ESC_SHOW_CURSOR);
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);
+}
+
+void sleepF(unsigned long miliseconds){
+    usleep(miliseconds);
 }
 
 #endif

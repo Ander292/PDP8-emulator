@@ -34,5 +34,6 @@
                 "command": "./compile.ps1 -mode runEmulator", // This is executed in the terminal.
             }
         ]
-    }
+    },
+    "C_Cpp.default.compilerPath": "C:/msys64/ucrt64/bin/gcc.exe"
 }

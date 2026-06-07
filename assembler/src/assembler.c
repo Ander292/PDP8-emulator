@@ -24,11 +24,18 @@ lineT TranslateInstruction(lineOg l){
         for(int i = 0; i < (int)sizeof(RegisterInstrTable) / (int)sizeof(TranslInfo); i++){
             if(!strcmp(l.name, RegisterInstrTable[i].name)){
                 Result.instr = RegisterInstrTable[i].number;
-                break;
+                goto END;
+            }
+        }
+        for(int i = 0; i < (int)sizeof(IoInstrTable) / (int)sizeof(TranslInfo); i++){
+            if(!strcmp(l.name, IoInstrTable[i].name)){
+                Result.instr = IoInstrTable[i].number;
+                goto END;
             }
         }
     }
 
+    END:
     return Result;
 }
 

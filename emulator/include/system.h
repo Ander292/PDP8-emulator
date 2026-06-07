@@ -1,5 +1,5 @@
-#ifndef OUTPUT_H
-#define OUTPUT_H
+#ifndef SYSTEM_H
+#define SYSTEM_H
 
 #define ESC_SEQ "\x1b["
 #define ESC(c) ESC_SEQ c
@@ -23,8 +23,7 @@ typedef struct consoleInfo{
     int width;
 } consoleInfo;
 
-consoleInfo getConsoleInfo();
-
 void moveCursorPos(int x, int y);
 int instrToStr(char *outBuffer, word memoryWord);
+void sleepF(unsigned long miliseconds);
 #endif

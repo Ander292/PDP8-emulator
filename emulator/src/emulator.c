@@ -1,11 +1,12 @@
 #include <string.h>
 #include <stdio.h>
 #include <locale.h>
+#include <pthread.h>
 
 #include "instrTable.h"
 #include "emulator.h"
 #include "shared.c"
-#include "terminal.h"
+#include "system.h"
 
 
 word memory[MEMORY_SIZE];
@@ -18,15 +19,22 @@ int instrToStr(char *outBuffer, word memoryWord){
                     return sprintf(outBuffer, "%s %u", MemoryInstrTable[i].name, GET_OPERAND(memoryWord));
                 }
             }
-            break;
+            goto ERROR;
         case REGISTER_INSTRUCTION:
             for(word i = 0; i < sizeof(RegisterInstrTable) / sizeof(TranslInfo); i++){
                 if(memoryWord == RegisterInstrTable[i].number){
                     return sprintf(outBuffer, "%s", RegisterInstrTable[i].name);
                 }
             }
-            break;
+            goto ERROR;
+        case IO_INSTRUCTION:
+            for(word i = 0; i < sizeof(IoInstrTable) / sizeof(TranslInfo); i++)
+                if(memoryWord == IoInstrTable[i].number){
+                    return sprintf(outBuffer, "%s", IoInstrTable[i].name);
+                }
+            goto ERROR;
         default:
+            ERROR:
             outBuffer[0] = '?';
             outBuffer[1] = 0;
             return -1;
@@ -112,7 +120,6 @@ int main(int argc, char *argv[]){
     size_t size = fread(memory, sizeof(word), sizeof(memory)/sizeof(word), f);
     if(size == 0) ErrorExit("Size was 0");
 
-    
     if(outPre[0] != 0) {
         int result = memoryDumpCsv(outPre, memory, MEMORY_SIZE);
         if(result != -1)
@@ -126,7 +133,26 @@ int main(int argc, char *argv[]){
     if(dontRun) enterRawMode();
     registers regs = {0};
     initRegisters(&regs, atoi(argv[2]));
-    processor(&regs, memory, dontRun);
+    //processor(&regs, memory, dontRun);
+// Creating the threads
+    pthread_t processorTh, teleprinterOutTh, teleprinterInTh;
+    // pthread_attr_t attr = {0};
+    // pthread_attr_init(&attr);
+    // pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+    processorArgs pArgs = {
+        .debugMode = dontRun,
+        .memory = memory,
+        .regState = &regs
+    };
+    pthread_create(&teleprinterOutTh, NULL, &teleprinterOutputThread, (void*)&regs);
+    pthread_create(&teleprinterInTh, NULL, &teleprinterInputThread, (void*)&regs);
+    pthread_create(&processorTh, NULL, processorThread, (void *)&pArgs);
+    // pthread_attr_destroy(&attr);
+    pthread_join(teleprinterOutTh, NULL);
+    pthread_join(teleprinterInTh, NULL);
+    pthread_join(processorTh, NULL);
+
     if(dontRun) leaveRawMode();
 
     if(outBin[0] != 0) {
@@ -138,6 +164,6 @@ int main(int argc, char *argv[]){
         if(result != -1)
             printf("Wrote post-run csv memDump(%d) to path: %s\n", result, outCsv);
     }
-    
+
     return 0;
 }

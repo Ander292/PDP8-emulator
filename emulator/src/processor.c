@@ -1,8 +1,9 @@
 #include "emulator.h"
-#include "terminal.h"
+#include "system.h"
 
 #include <string.h>
 #include <stdio.h>
+#include <pthread.h>
 
 typedef DEFINE_INSTR(instrFunction);
 
@@ -34,6 +35,15 @@ instrInfo RegisterInstr[] = {
     {sza, SZA},
     {sze, SZE},
     {hlt, HLT}
+};
+
+instrInfo InOutInstr[] = {
+    {inp, INP},
+    {out, OUT},
+    {ski, SKI},
+    {sko, SKO},
+    {ion, ION},
+    {iof, IOF}
 };
 
 void initRegisters(pRegisters regState, word startAddress){
@@ -82,6 +92,7 @@ void processor(registers *regState, word *memory, int debugMode){
     int step = ' ';
     registers oldState = {0};
     for(regState->SC = 0; regState->S == 1; regState->SC = (regState->SC + 1) % 4){
+        // sleepF(1);
         switch(GET_CYCLE(regState->F, regState->R)){
             case CYCLE_FETCH:{
                 switch(regState->SC){
@@ -158,8 +169,24 @@ void processor(registers *regState, word *memory, int debugMode){
                             regState->R = 0;
                         }
                         break;
+                    case IO_INSTRUCTION:
+                        for(word i = 0; i < sizeof(InOutInstr) / sizeof(instrInfo); i++){
+                            if(regState->MBR == InOutInstr[i].instrId){
+                                found = 1;
+                                InOutInstr[i].fPtr(regState);
+                                break;
+                            }
+                        }
+                        if(!found){
+                            printf("Invalid isntruction at PC = %d!\n", regState->PC-1);
+                            regState->F = 0;
+                            regState->R = 0;
+                        }
+                        break;
                     default:
-                        ErrorExit("Input output not implemented yet!");
+                        char buffer[64];
+                        sprintf(buffer, "Fatal error at address %d!\n", regState->PC-1);
+                        ErrorExit(buffer);
                 }
             } break;
             case CYCLE_INTERRUPT:{
@@ -195,10 +222,18 @@ void processor(registers *regState, word *memory, int debugMode){
                 //printf("%d\n", regState->PC);
             formatAndDisplayOutput(regState, &oldState, memory);
         }
+        // If output flag is 0, start the teleprinter
         oldState = *regState;
     }
     END:
     if(debugMode) puts(ESC_CLEAR_SCREEN);
-    puts("Program execution ended!");
+    //puts("Processor is about to stop...!");
     if(debugMode) getchar();
+}
+
+void *processorThread(void *args){
+    //puts("Processor started");
+    processorArgs *pArgs = ((processorArgs *)args);
+    processor(pArgs->regState, pArgs->memory, pArgs->debugMode);
+    return NULL;
 }

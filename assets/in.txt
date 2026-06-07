@@ -1,12 +1,26 @@
-;; Program računa y = 2a+b+1, program se učitava od adrese 200, podaci od adrese 210
+;; Program štampa sva slova engleske abecede
 
-200 LDA 210
-201 CIL
-202 ADD 211
-203 INC
-204 STA 212
-205 HLT
+;; Provjera uslova (limit - tren)
+200 LDA 300
+201 CMA
+202 ADD 301
+203 SNA
+204 BUN 207 ;; Skok na tijelo
+205 BUN 218 ;; Skok na kraj
+;; Tijelo petlje 
+207 LDA 300 ;; Učitavam trenutni karakter
+208 SKO     ;; Ako je output spreman preskačem
+209 BUN 208 ;; Vrtim ako nije
+210 OUT     ;; Štampam
+211 INC     ;; Inkrementiram
+212 STA 300 ;; Čuvam novu vrijednost
+213 LDA 302 ;; Učitavam razmak
+214 SKO     ;; Ako je output spreman preskačem
+215 BUN 214 ;; Ako nije vrtim
+216 OUT     ;; Štampam
+217 BUN 200 ;; Skok na provjeru uslova
+218 HLT     ;; Kraj
 
-210 DEC 27  ;; a
-211 DEC 14  ;; b
-212 DEC 0   ;; y
+300 DEC 33  ;; Prvi karakter
+301 DEC 126 ;; Limit
+302 DEC 32  ;; Razmak

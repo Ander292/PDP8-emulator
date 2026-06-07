@@ -323,3 +323,94 @@ DEFINE_INSTR(hlt){
             break;
     }
 }
+
+/*
+    Input-Output Instructions
+*/
+
+DEFINE_INSTR(inp){
+    switch(regState->SC){
+        case 0:
+            regState->ACC = regState->INPR;
+            regState->FGI = 0;
+            break;
+        case 1:
+        case 2:
+            break; // Empty tacts
+        case 3:
+            regState->F = 0;
+            regState->R = 0;
+            break;
+    }
+}
+DEFINE_INSTR(out){
+    switch(regState->SC){
+        case 0:
+            regState->OUTR = regState->ACC;
+            regState->FGO = 0;
+            break;
+        case 1:
+        case 2:
+            break; // Empty tacts
+        case 3:
+            regState->F = 0;
+            regState->R = 0;
+            break;
+    }
+}
+DEFINE_INSTR(ski){
+    switch(regState->SC){
+        case 0:
+            if(regState->FGI == 1) regState->PC++;
+            break;
+        case 1:
+        case 2:
+            break; // Empty tacts
+        case 3:
+            regState->F = 0;
+            regState->R = 0;
+            break;
+    }
+}
+DEFINE_INSTR(sko){
+    switch(regState->SC){
+        case 0:
+            if(regState->FGO == 1) regState->PC++;
+            break;
+        case 1:
+        case 2:
+            break; // Empty tacts
+        case 3:
+            regState->F = 0;
+            regState->R = 0;
+            break;
+    }
+}
+DEFINE_INSTR(ion){
+    switch(regState->SC){
+        case 0:
+            regState->IEN = 1;
+            break;
+        case 1:
+        case 2:
+            break; // Empty tacts
+        case 3:
+            regState->F = 0;
+            regState->R = 0;
+            break;
+    }
+}
+DEFINE_INSTR(iof){
+    switch(regState->SC){
+        case 0:
+            regState->IEN = 0;
+            break;
+        case 1:
+        case 2:
+            break; // Empty tacts
+        case 3:
+            regState->F = 0;
+            regState->R = 0;
+            break;
+    }
+}
