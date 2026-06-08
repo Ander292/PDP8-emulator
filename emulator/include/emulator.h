@@ -17,6 +17,8 @@
 #define GET_INSTRUCTION(memWord) (((memWord) >> 12) & 0xF)
 #define GET_OPERAND(memWord) ((memWord) & 0x0FFF)
 
+#define GET_TYPE_EX(IOPR) (((IOPR) & 0x7) != 7 ? MEMORY_INSTRUCTION : ((IOPR) & 0x8 ? IO_INSTRUCTION : REGISTER_INSTRUCTION))
+
 #define GET_CYCLE(f, r) (((f) << 1) + (r))
 #define CYCLE_FETCH 0
 #define CYCLE_INDIRECT 1
@@ -42,6 +44,7 @@ typedef union instr{
 
 extern pthread_mutex_t inputMutex;
 extern pthread_mutex_t outputMutex;
+extern pthread_cond_t outCondition;
 
 typedef struct registers{
     word PC : 12;
@@ -59,7 +62,6 @@ typedef struct registers{
         word F : 1; //
         word R : 1; // FR cycle
         
-
         volatile word IEN : 1; // Interrupt
         volatile word FGI : 1; // Input ready for transfer
         volatile word FGO : 1; // Output available

@@ -49,6 +49,7 @@ instrInfo InOutInstr[] = {
 void initRegisters(pRegisters regState, word startAddress){
     regState->PC = startAddress;
     regState->S = 1;
+    regState->FGO = 1;
 }
 
 void formatLimiter(char *buffer, char c, int size){
@@ -92,7 +93,7 @@ void processor(registers *regState, word *memory, int debugMode){
     int step = ' ';
     registers oldState = {0};
     for(regState->SC = 0; regState->S == 1; regState->SC = (regState->SC + 1) % 4){
-        // sleepF(1);
+        //sleepF(1);
         //printf("%d:%d\n", regState->PC, regState->SC);
         switch(GET_CYCLE(regState->F, regState->R)){
             case CYCLE_FETCH:{
@@ -141,7 +142,7 @@ void processor(registers *regState, word *memory, int debugMode){
             } break;
             case CYCLE_EXECUTE:{
                 int found = 0;
-                switch(GET_TYPE(regState->MBR)){
+                switch(GET_TYPE_EX((regState->I << 3) | regState->OPR)){
                     case MEMORY_INSTRUCTION:
                         for(word i = 0; i < sizeof(MemoryInstr) / sizeof(instrInfo); i++){
                             if(regState->OPR == MemoryInstr[i].instrId){
@@ -151,24 +152,6 @@ void processor(registers *regState, word *memory, int debugMode){
                             }
                         }
                         if(!found){
-                            // char instrName[16];
-                            // char buffer[256];
-                            // word cycle = (regState->SC == 3 ? 
-                            //     GET_CYCLE(oldState.F, oldState.R) : 
-                            //     GET_CYCLE(regState->F, regState->R));
-                            // instrToStr(instrName, memory[regState->PC-1]);
-                            // sprintf(buffer,
-                            //     ESC_CLEAR_LINE"c%d t%d: %s\n"
-                            //     ESC_CLEAR_LINE"PC:    %-4d\tCurrent: %s\n"
-                            //     ESC_CLEAR_LINE"ACC:   %-8d\tE: %1d\n"
-                            //     ESC_CLEAR_LINE"MBR:   %-8d\n"
-                            //     ESC_CLEAR_LINE"IOPR: %s%-2d\tMAR %-8d",
-                            //     cycle, regState->SC, GET_CYCLE_STRING(cycle),
-                            //     regState->PC, instrName,
-                            //     regState->ACC, regState->E, regState->MBR,
-                            //     (regState->I ? "I" : " "), regState->OPR, regState->MAR
-                            // );
-                            // printf(buffer);
                             printf("Mem: Invalid isntruction at PC = %d!\n", regState->PC-1);
                             regState->F = 0;
                             regState->R = 0;
@@ -197,7 +180,7 @@ void processor(registers *regState, word *memory, int debugMode){
                             }
                         }
                         if(!found){
-                            printf("IO: Invalid isntruction at PC = %d!\n", regState->PC-1);
+                            printf("IO: Invalid isntruction at PC = %d | IOPR = %c%d!\n", regState->PC-1, (regState->I ? 'I' : 'D'), regState->OPR);
                             regState->F = 0;
                             regState->R = 0;
                         }
@@ -243,6 +226,9 @@ void processor(registers *regState, word *memory, int debugMode){
         }
         // If output flag is 0, start the teleprinter
         oldState = *regState;
+        // if(regState->OPR == 7 && regState->I == 1){
+        //     printf("IOPR was F\n");
+        // }
     }
     END:
     if(debugMode) puts(ESC_CLEAR_SCREEN);
@@ -255,5 +241,6 @@ void *processorThread(void *args){
     //puts("Processor started");
     processorArgs *pArgs = ((processorArgs *)args);
     processor(pArgs->regState, pArgs->memory, pArgs->debugMode);
+    //puts("Processor ended...");
     return NULL;
 }

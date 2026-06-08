@@ -1,0 +1,29 @@
+;; Will print a string (byte by byte until it comes to the terminal character)
+ 
+
+200 LDA*249 ;; Loading current character
+;; Comparison with 0 (terminal character)
+201 SZA     ;; If accumulator iz zero skip
+202 BUN 204 ;; Jump to print
+203 BUN 211 ;; Jump to end
+;; Printing of character
+204 SKO     ;; Skip if output ready
+205 BUN 204 ;; If not spin
+206 OUT     ;; Print the accumulator
+;; Increment
+207 LDA 249 ;; Loading the address of the focused char
+208 INC     ;; Go forward by one
+209 STA 249 ;; Saving the value
+210 BUN 200 ;; Jump to start
+211 HLT     ;; End of program
+
+
+249 DEC 250 ;; Address of the current focused char
+;; The string itself
+250 DEC 83
+251 DEC 116
+252 DEC 114
+253 DEC 105
+254 DEC 110
+255 DEC 103
+256 DEC 0

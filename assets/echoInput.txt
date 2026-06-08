@@ -23,11 +23,11 @@
 214 OUT     ;; Print
 
 215 BUN 201 ;; Jump to input
-216 hlt     ;; End of program
+216 HLT     ;; End of program
 
 
 249 DEC 0   ;; Temporary storage
 250 DEC 9   ;; Tab constant
 
 ;; Temporary debug
-204 BUN 212 ;; To overwrite the checking part
+;204 BUN 212 ;; To overwrite the checking part

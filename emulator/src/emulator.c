@@ -12,6 +12,7 @@
 word memory[MEMORY_SIZE];
 pthread_mutex_t inputMutex;
 pthread_mutex_t outputMutex;
+pthread_cond_t outCondition;
 
 int instrToStr(char *outBuffer, word memoryWord){
     switch(GET_TYPE(memoryWord)){
@@ -152,14 +153,21 @@ int main(int argc, char *argv[]){
 
     pthread_mutex_init(&inputMutex, NULL);
     pthread_mutex_init(&outputMutex, NULL);
+    //pthread_cond_init(&outCondition, NULL);
 
     pthread_create(&teleprinterOutTh, NULL, &teleprinterOutputThread, (void*)&regs);
     pthread_create(&teleprinterInTh, NULL, &teleprinterInputThread, (void*)&regs);
     pthread_create(&processorTh, NULL, processorThread, (void *)&pArgs);
     // pthread_attr_destroy(&attr);
-    pthread_join(teleprinterOutTh, NULL);
-    pthread_join(teleprinterInTh, NULL);
     pthread_join(processorTh, NULL);
+    pthread_join(teleprinterInTh, NULL);
+    
+    // pthread_mutex_lock(&outputMutex);
+    //     regs.FGO = 1;
+    // pthread_mutex_unlock(&outputMutex);
+    //pthread_cond_broadcast(&outCondition);
+
+    pthread_join(teleprinterOutTh, NULL);
 
     if(dontRun) 
         leaveRawMode();

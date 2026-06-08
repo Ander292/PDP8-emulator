@@ -357,6 +357,7 @@ DEFINE_INSTR(out){
             regState->OUTR = regState->ACC;
             //printf("\nOUT reports %d:%c\n", regState->OUTR, regState->OUTR);
             regState->FGO = 0;
+            //pthread_cond_signal(&outCondition);
             pthread_mutex_unlock(&outputMutex);
             break;
         case 1:

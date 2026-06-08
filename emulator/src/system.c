@@ -36,22 +36,52 @@ void sleepF(unsigned long miliseconds){
     Sleep(miliseconds);
 }
 
-// TODO: Replace with ReadInput
+// TODO: Replace with ReadFile on stdout
 byte pollInput(unsigned long timeoutMS){
+#if 0
     unsigned long elapsed = 0;
-    unsigned long interval = 50;
+    unsigned long interval = timeoutMS;
 
     while(elapsed < timeoutMS){
         if(_kbhit()){
             byte c = _getch();
             if(c == 0) c = _getch();
-            //printf("\npollInput reports %d:%c\n", c, c);
+            // Special cases
+            if(c == '\r') c = '\n';
             return c;
         }
         Sleep(interval);
         elapsed += interval;
     }
     return 0;
+#endif
+    byte result = 0;
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD feedback;
+
+    unsigned long elapsed = 0;
+    unsigned long interval = 1; // Granularity
+    while(elapsed < timeoutMS){
+        switch(GetFileType(hStdin)){
+            case FILE_TYPE_CHAR:
+                GetNumberOfConsoleInputEvents(hStdin, &feedback);
+                break;
+            case FILE_TYPE_PIPE:
+                PeekNamedPipe(hStdin, NULL, 0, NULL, &feedback, NULL);
+                break;
+            default:
+                printf("Fatal error : Invalid stdin handle!\n");
+                break; 
+        }
+        Sleep(interval);
+        elapsed += interval;
+    }
+    if(feedback != 0){
+        ReadFile(hStdin, &result, 1, &feedback, NULL);
+        if(feedback == 0) printf("Read 0 bytes!\n");
+    }
+
+    return result;
 }
 
 /*

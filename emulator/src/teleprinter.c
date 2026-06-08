@@ -7,19 +7,21 @@
     stdout is simulated as teleprinter output
     stdin is simulated as the input
     Input is done character by character
+    Mutexes are used to prevent race condition and character loss
 */
 
-#define OUTPUT_LATENCY 5 // How long in ms takes to print one character
-#define POLL_TIMEOUT 50 // How long in ms should the polling cooldown be (to not burn the processor)
+#define OUTPUT_LATENCY 1 // How long in ms takes to print one character
+#define POLL_TIMEOUT 1 // How long in ms should the polling cooldown be (to not burn the processor)
 
 /*
     The teleprinter will print the character in OUTR and set FGO to 1
-    This function will be called async and will sleep before writting to
-    simulate slow hardware
+    This function will sleep after writting to
+    simulate slow hardware.
 */
 
 void teleprinterOut(pRegisters regState){
-    while(regState->S){
+    while(regState->S | regState->FGO == 0){
+
         pthread_mutex_lock(&outputMutex);
         if(regState->FGO == 0){
             putchar(regState->OUTR);
@@ -27,15 +29,13 @@ void teleprinterOut(pRegisters regState){
             fflush(stdout);
         }
         pthread_mutex_unlock(&outputMutex);
-
         sleepF(POLL_TIMEOUT); 
     }
 }
 void *teleprinterOutputThread(void *args){
-    //printf("Out thread started...\n");
     teleprinterOut((pRegisters)args);
+    //printf("Output is gone...\n");
     putchar('\n');
-    //printf("Output thread is about to end...\n");
     return NULL;
 }
 
@@ -52,8 +52,6 @@ void teleprinterIn(pRegisters regState){
             if(c != 0) {
                 regState->INPR = c;
                 regState->FGI = 1; // The program is now ready to read input
-                // printf("FGI was set to 1 by input");
-                // printf("\nteleIn reports %d:%c\n", c, c);
             }
             pthread_mutex_unlock(&inputMutex);
         }
@@ -64,8 +62,7 @@ void teleprinterIn(pRegisters regState){
 
 
 void *teleprinterInputThread(void *args){
-    //printf("Input thread started...\n");
     teleprinterIn((pRegisters)args);
-    //printf("Input thread is about to end...\n");
+    //printf("Input is gone...\n");
     return NULL;
 }

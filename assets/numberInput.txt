@@ -1,0 +1,97 @@
+;; Calculates res = 2a + b + 1
+
+200 BSA 300
+201 STA 250
+202 HLT
+
+
+250 DEC 2   ;; a
+251 DEC 8   ;; b
+252 DEC 0   ;; res
+253 DEC 0   ;; b * 10
+
+;; Input proc
+;; Data used by the proc
+294 DEC -32 ;; -' '
+295 DEC -13 ;; -'\r'
+296 DEC -10 ;; -'\n'
+297 DEC -48 ;; -'0' by ascii
+298 DEC 0   ;; Temp
+299 DEC 0   ;; Saving result
+300 DEC 0   ;; Return address will be saved here
+;; Cleaning result
+301 CLA
+302 STA 299
+;; Reading a character
+303 SKI
+304 BUN 303
+305 INP
+;; Checking if its blank, newline or carriage return
+306 STA 298 ;; Saving the character
+307 ADD 294 ;; Adding blank
+308 SZA
+309 BUN 311 ;; Continue checking
+310 BUN 329 ;; Jump to end
+
+311 LDA 298 ;; Loading the character again
+312 ADD 295 ;; Loading -'\r'
+313 SZA
+314 BUN 316 ;; Next check
+315 BUN 329 ;; Goto end
+
+316 LDA 298
+317 ADD 296
+318 SZA
+319 BUN 321 ;; Jump to interpreting the char
+320 BUN 329 ;; Jump to end
+
+;; Translating and saving
+321 LDA 298 ;; Loading the character
+322 ADD 297 ;; Adding -'0', the number is now raw inside the acc
+323 STA 298 ;; Saving it
+324 LDA 299 ;; Loading result
+325 BSA 350 ;; Multiplication by 10 procedure
+326 ADD 298 ;; Adding the number
+327 STA 299 ;; Saving the result back
+328 BUN 303 ;; Jump to reading again
+;; Cleanup
+329 CMA
+330 STA 298
+;; End
+331 LDA 299 ;; Loading the return value
+332 BUN*300 ;; Return control to caller
+
+
+
+
+;; Multiplication by 10 procedure
+346 DEC 0   ;; Result
+347 DEC 0   ;; Counter
+348 DEC 0   ;; For saving the accumulator
+349 DEC 10  ;; The number it multiplies with (can be changed during runtime)
+350 DEC 0   ;; For saving the return address
+;; Preparing loop
+351 STA 348
+352 CLA
+353 STA 347 ;; Setting counter to 0
+354 STA 346 ;; Resetting the result
+;; Condition check (i < 10) => i - 10 < 0
+355 LDA 349 ;; Loading the multiplier
+356 CMA     ;; Negating
+357 ADD 347 ;; Adding counter
+358 SNA     ;; If the acc is negative, skip one instruction
+359 BUN 369 ;; Jump to end of loop
+360 BUN 365 ;; Jump to body
+;; Increment
+361 LDA 347
+362 INC
+363 STA 347
+364 BUN 355 ;; Jump to condition check
+;; Body
+365 LDA 346 ;; Loading result
+366 ADD 348 ;; Argument addition
+367 STA 346 ;; Saving the result
+368 BUN 361 ;; Jump to increment
+;; End
+369 LDA 346 ;; Loading the result
+370 BUN*350 ;; Returning control to the caller
