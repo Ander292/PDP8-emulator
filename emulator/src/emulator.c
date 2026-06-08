@@ -8,11 +8,14 @@
 #include "shared.c"
 #include "system.h"
 
-
-word memory[MEMORY_SIZE];
 pthread_mutex_t inputMutex;
 pthread_mutex_t outputMutex;
-pthread_cond_t outCondition;
+
+word memory[MEMORY_SIZE];
+/* Used to load the file before being moved to memory
+   Depending on the type of loader used it will be interpreted differently */
+word loadBuffer[MEMORY_SIZE];
+
 
 int instrToStr(char *outBuffer, word memoryWord){
     switch(GET_TYPE(memoryWord)){
@@ -120,8 +123,10 @@ int main(int argc, char *argv[]){
     FILE *f = fopen(argv[1], "rb");
     if(f == NULL) ErrorExit("Fatal error opening bin file!");
 
-    size_t size = fread(memory, sizeof(word), sizeof(memory)/sizeof(word), f);
+    size_t size = fread(loadBuffer, sizeof(word), sizeof(loadBuffer)/sizeof(word), f);
     if(size == 0) ErrorExit("Size was 0");
+
+    LOAD_PROGRAM(memory, loadBuffer);
 
     if(outPre[0] != 0) {
         int result = memoryDumpCsv(outPre, memory, MEMORY_SIZE);

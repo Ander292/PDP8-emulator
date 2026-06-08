@@ -20,4 +20,6 @@ Code example:
       211 DEC 14  ;; b
       212 DEC 0   ;; y
 
-Input output operations are explained in some examples inside assets folder. Interrupt routine is NOT implemented and will crash the program. IO operations are available only by using the IO instructions directly
+Input output operations are explained in some examples inside assets folder. Interrupt routine is NOT implemented and will crash the program. IO operations are available only by using the IO instructions directly.
+
+Linux version is completely broken. Ocasional invalid instruction errors happen on completely valid code. Input/Output doesnt work properly.

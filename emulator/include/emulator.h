@@ -27,6 +27,8 @@
 
 #define GET_CYCLE_STRING(n) ((n == CYCLE_FETCH ? "FETCH" : (n == CYCLE_INDIRECT ? "INDIRECT" : (n == CYCLE_EXECUTE ? "EXECUTE" : "INTERRUPT"))))
 
+#define LOAD_PROGRAM(memB, loadB) rawLoader(memB, loadB)
+
 #include "instr.h"
 
 //----------------------------------------------------------------------//
@@ -104,6 +106,12 @@ byte pollInput(unsigned long timeoutMS);
 
 void *teleprinterOutputThread(void *args);
 void *teleprinterInputThread(void *args);
+
+/*
+    Loader
+*/
+void rawLoader(word *memory, word *rawContent);
+
 
 /*
     Individual instruction function declarations
