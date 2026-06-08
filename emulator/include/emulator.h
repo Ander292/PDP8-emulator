@@ -11,9 +11,11 @@
 #define REGISTER_INSTRUCTION 1
 #define IO_INSTRUCTION 2
 
-#define GET_INSTRUCTION(memWord) (((instr)((word)memWord)).parts.instr)
-#define GET_OPERAND(memWord) (((instr)((word)memWord)).parts.opernd)
+//#define GET_INSTRUCTION(memWord) (((instr)((word)memWord)).parts.instr)
+//#define GET_OPERAND(memWord) (((instr)((word)memWord)).parts.opernd)
 #define GET_TYPE(memWord) ((GET_INSTRUCTION(memWord) & 0x7) != 7 ? MEMORY_INSTRUCTION : (GET_INSTRUCTION(memWord) & 0x8 ? IO_INSTRUCTION : REGISTER_INSTRUCTION))
+#define GET_INSTRUCTION(memWord) (((memWord) >> 12) & 0xF)
+#define GET_OPERAND(memWord) ((memWord) & 0x0FFF)
 
 #define GET_CYCLE(f, r) (((f) << 1) + (r))
 #define CYCLE_FETCH 0

@@ -336,10 +336,10 @@ DEFINE_INSTR(inp){
             pthread_mutex_lock(&inputMutex);
             regState->ACC = regState->INPR;
             regState->FGI = 0;
-            printf("FGI was set to 0 by inp instruction");
+            //printf("FGI was set to 0 by inp instruction");
             pthread_mutex_unlock(&inputMutex);
             //printf("\nINP: ACC=%d, FGI=%d\n", regState->ACC, regState->FGI);
-            printf("\nINP reports %d:%c\n", regState->ACC, regState->ACC);
+            //printf("\nINP reports %d:%c\n", regState->ACC, regState->ACC);
             break;
         case 1:
         case 2:
@@ -372,10 +372,9 @@ DEFINE_INSTR(ski){
     switch(regState->SC){
         case 0:
             pthread_mutex_lock(&inputMutex);
-            word FGI = regState->FGI;
             //printf("%s", (FGI == 1 ? "Skipovano\n" : ""));
+            if(regState->FGI) regState->PC++;
             pthread_mutex_unlock(&inputMutex);
-            if(FGI == 1) regState->PC++;
             break;
         case 1:
         case 2:
@@ -390,9 +389,8 @@ DEFINE_INSTR(sko){
     switch(regState->SC){
         case 0:
             pthread_mutex_lock(&outputMutex);
-            word FGO = regState->FGO;
+            if(regState->FGO == 1) regState->PC++;
             pthread_mutex_unlock(&outputMutex);
-            if(FGO == 1) regState->PC++;
             break;
         case 1:
         case 2:

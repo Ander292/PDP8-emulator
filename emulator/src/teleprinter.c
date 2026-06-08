@@ -20,20 +20,13 @@
 
 void teleprinterOut(pRegisters regState){
     while(regState->S){
-        int shouldPrint = 0;
-
         pthread_mutex_lock(&outputMutex);
-        if(regState->FGO == 0) shouldPrint = 1;
-        pthread_mutex_unlock(&outputMutex);
-
-        if(shouldPrint){
-            pthread_mutex_lock(&outputMutex);
-            byte c = regState->OUTR;
+        if(regState->FGO == 0){
+            putchar(regState->OUTR);
             regState->FGO = 1;
-            pthread_mutex_unlock(&outputMutex);
-            putchar(c);
             fflush(stdout);
         }
+        pthread_mutex_unlock(&outputMutex);
 
         sleepF(POLL_TIMEOUT); 
     }
@@ -53,23 +46,18 @@ void *teleprinterOutputThread(void *args){
 
 void teleprinterIn(pRegisters regState){
     while(regState->S){
-        int shouldInput = 0;
         pthread_mutex_lock(&inputMutex);
-        if(regState->FGI == 0) shouldInput = 1;
-        pthread_mutex_unlock(&inputMutex);
-        if(shouldInput) {
+        if(regState->FGI == 0) {
             byte c = pollInput(POLL_TIMEOUT);
-            //byte c = getchar();
             if(c != 0) {
-                pthread_mutex_lock(&inputMutex);
                 regState->INPR = c;
                 regState->FGI = 1; // The program is now ready to read input
-                printf("FGI was set to 1 by input");
-                pthread_mutex_unlock(&inputMutex);
-                printf("\nteleIn reports %d:%c\n", c, c);
+                // printf("FGI was set to 1 by input");
+                // printf("\nteleIn reports %d:%c\n", c, c);
             }
+            pthread_mutex_unlock(&inputMutex);
         }
-        //sleepF(POLL_TIMEOUT);
+        sleepF(POLL_TIMEOUT);
     }
 }
 

@@ -36,6 +36,7 @@ void sleepF(unsigned long miliseconds){
     Sleep(miliseconds);
 }
 
+// TODO: Replace with ReadInput
 byte pollInput(unsigned long timeoutMS){
     unsigned long elapsed = 0;
     unsigned long interval = 50;

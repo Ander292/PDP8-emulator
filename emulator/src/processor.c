@@ -93,6 +93,7 @@ void processor(registers *regState, word *memory, int debugMode){
     registers oldState = {0};
     for(regState->SC = 0; regState->S == 1; regState->SC = (regState->SC + 1) % 4){
         // sleepF(1);
+        //printf("%d:%d\n", regState->PC, regState->SC);
         switch(GET_CYCLE(regState->F, regState->R)){
             case CYCLE_FETCH:{
                 switch(regState->SC){
