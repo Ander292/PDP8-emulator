@@ -98,8 +98,32 @@ byte pollInput(unsigned long timeoutMS){
 #elif defined LINUX
 #include <termios.h>
 #include <unistd.h>
+#include <sys/select.h>
 struct termios original;
 
+byte pollInput(unsigned long timeoutMS){
+    fd_set readfds; 
+    struct timeval timeout;
+
+    while(1){
+        FD_ZERO(&readfds);
+        FD_SET(STDIN_FILENO, &readfds);
+
+        // Zero timeout makes the select call return immediately
+        timeout.tv_sec = 0;
+        timeout.tv_usec = 0;
+
+        int ready = select(STDIN_FILENO + 1, &readfds, NULL, NULL, &timeout);
+
+        if(ready > 0 && FD_ISSET(STDIN_FILENO, &readfds)){
+            char ch;
+            read(STDIN_FILENO, &ch, 1);
+        }else{
+            sleep(1);
+        }
+    }
+    return 0;
+}
 void enterRawMode(){
     tcgetattr(STDIN_FILENO, &original);
     struct termios raw = original;

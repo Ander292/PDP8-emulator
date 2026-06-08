@@ -20,9 +20,4 @@ Code example:
       211 DEC 14  ;; b
       212 DEC 0   ;; y
 
-I have not implemented IO operations yet so the only way to view the result of the code is to take a look at the memory dump at the end of the program.
-Looking at binary memory dumps is anoying so I made it output a csv file as well.
-
-Run the program argless to get what arguments are available and what do they do.
-
-Currently the debugger doesnt work in linux for now
+Input output operations are explained in some examples inside assets folder. Interrupt routine is NOT implemented and will crash the program. IO operations are available only by using the IO instructions directly
