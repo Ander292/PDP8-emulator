@@ -99,6 +99,7 @@ byte pollInput(unsigned long timeoutMS){
 #include <termios.h>
 #include <unistd.h>
 #include <sys/select.h>
+#include <time.h>
 struct termios original;
 
 byte pollInput(unsigned long timeoutMS){
@@ -124,6 +125,7 @@ byte pollInput(unsigned long timeoutMS){
     }
     return 0;
 }
+
 void enterRawMode(){
     tcgetattr(STDIN_FILENO, &original);
     struct termios raw = original;
@@ -145,7 +147,13 @@ void leaveRawMode(){
 }
 
 void sleepF(unsigned long miliseconds){
-    usleep(miliseconds);
+    //usleep(miliseconds);
+    //printf("Slept\n");
+    struct timespec ts;
+    ts.tv_sec = miliseconds / 1000;
+    ts.tv_nsec = (miliseconds % 1000) * 1000000L;
+    nanosleep(&ts, NULL);
+    //printf("Woke up\n");
 }
 
 #endif

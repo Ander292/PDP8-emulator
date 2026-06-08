@@ -157,7 +157,7 @@ int main(int argc, char *argv[]){
 
     pthread_create(&teleprinterOutTh, NULL, &teleprinterOutputThread, (void*)&regs);
     pthread_create(&teleprinterInTh, NULL, &teleprinterInputThread, (void*)&regs);
-    pthread_create(&processorTh, NULL, processorThread, (void *)&pArgs);
+    pthread_create(&processorTh, NULL, &processorThread, (void *)&pArgs);
     // pthread_attr_destroy(&attr);
     pthread_join(processorTh, NULL);
     pthread_join(teleprinterInTh, NULL);
