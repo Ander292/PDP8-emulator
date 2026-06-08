@@ -1,0 +1,33 @@
+;; Example program printing characters which are inputed
+
+200 CLA     ;; Clearing acc
+
+;; Inputing a character
+201 SKI     ;; Skip if input is ready
+202 BUN 201 ;; If not loop
+203 INP     ;; Read into accumulator
+
+;; Now we will see if the character is equals tab. If it is we will end program
+204 STA 249 ;; Saving the character
+205 LDA 250 ;; Loading tab
+206 CMA     ;; Complementing tab
+207 ADD 249 ;; Adding the character
+208 SZA     ;; If the acc is zero then the characters are equal
+209 BUN 211 ;; Jump to print
+210 BUN 216 ;; Jump to end
+
+;; Printing
+211 LDA 249 ;; Loading the character
+212 SKO     ;; Skip if output flag
+213 BUN 201 ;; If not loop
+214 OUT     ;; Print
+
+215 BUN 201 ;; Jump to input
+216 hlt     ;; End of program
+
+
+249 DEC 0   ;; Temporary storage
+250 DEC 9   ;; Tab constant
+
+;; Temporary debug
+204 BUN 212 ;; To overwrite the checking part

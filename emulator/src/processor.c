@@ -150,7 +150,25 @@ void processor(registers *regState, word *memory, int debugMode){
                             }
                         }
                         if(!found){
-                            printf("Invalid isntruction at PC = %d!\n", regState->PC-1);
+                            // char instrName[16];
+                            // char buffer[256];
+                            // word cycle = (regState->SC == 3 ? 
+                            //     GET_CYCLE(oldState.F, oldState.R) : 
+                            //     GET_CYCLE(regState->F, regState->R));
+                            // instrToStr(instrName, memory[regState->PC-1]);
+                            // sprintf(buffer,
+                            //     ESC_CLEAR_LINE"c%d t%d: %s\n"
+                            //     ESC_CLEAR_LINE"PC:    %-4d\tCurrent: %s\n"
+                            //     ESC_CLEAR_LINE"ACC:   %-8d\tE: %1d\n"
+                            //     ESC_CLEAR_LINE"MBR:   %-8d\n"
+                            //     ESC_CLEAR_LINE"IOPR: %s%-2d\tMAR %-8d",
+                            //     cycle, regState->SC, GET_CYCLE_STRING(cycle),
+                            //     regState->PC, instrName,
+                            //     regState->ACC, regState->E, regState->MBR,
+                            //     (regState->I ? "I" : " "), regState->OPR, regState->MAR
+                            // );
+                            // printf(buffer);
+                            printf("Mem: Invalid isntruction at PC = %d!\n", regState->PC-1);
                             regState->F = 0;
                             regState->R = 0;
                         }
@@ -164,7 +182,7 @@ void processor(registers *regState, word *memory, int debugMode){
                             }
                         }
                         if(!found){
-                            printf("Invalid isntruction at PC = %d!\n", regState->PC-1);
+                            printf("Reg: Invalid isntruction at PC = %d!\n", regState->PC-1);
                             regState->F = 0;
                             regState->R = 0;
                         }
@@ -178,7 +196,7 @@ void processor(registers *regState, word *memory, int debugMode){
                             }
                         }
                         if(!found){
-                            printf("Invalid isntruction at PC = %d!\n", regState->PC-1);
+                            printf("IO: Invalid isntruction at PC = %d!\n", regState->PC-1);
                             regState->F = 0;
                             regState->R = 0;
                         }
@@ -229,6 +247,7 @@ void processor(registers *regState, word *memory, int debugMode){
     if(debugMode) puts(ESC_CLEAR_SCREEN);
     //puts("Processor is about to stop...!");
     if(debugMode) getchar();
+    sleepF(1);
 }
 
 void *processorThread(void *args){

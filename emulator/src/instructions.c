@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <pthread.h>
 #include "emulator.h"
 
 extern word memory[MEMORY_SIZE];
@@ -331,8 +333,13 @@ DEFINE_INSTR(hlt){
 DEFINE_INSTR(inp){
     switch(regState->SC){
         case 0:
+            pthread_mutex_lock(&inputMutex);
             regState->ACC = regState->INPR;
             regState->FGI = 0;
+            printf("FGI was set to 0 by inp instruction");
+            pthread_mutex_unlock(&inputMutex);
+            //printf("\nINP: ACC=%d, FGI=%d\n", regState->ACC, regState->FGI);
+            printf("\nINP reports %d:%c\n", regState->ACC, regState->ACC);
             break;
         case 1:
         case 2:
@@ -346,8 +353,11 @@ DEFINE_INSTR(inp){
 DEFINE_INSTR(out){
     switch(regState->SC){
         case 0:
+            pthread_mutex_lock(&outputMutex);
             regState->OUTR = regState->ACC;
+            //printf("\nOUT reports %d:%c\n", regState->OUTR, regState->OUTR);
             regState->FGO = 0;
+            pthread_mutex_unlock(&outputMutex);
             break;
         case 1:
         case 2:
@@ -361,7 +371,11 @@ DEFINE_INSTR(out){
 DEFINE_INSTR(ski){
     switch(regState->SC){
         case 0:
-            if(regState->FGI == 1) regState->PC++;
+            pthread_mutex_lock(&inputMutex);
+            word FGI = regState->FGI;
+            //printf("%s", (FGI == 1 ? "Skipovano\n" : ""));
+            pthread_mutex_unlock(&inputMutex);
+            if(FGI == 1) regState->PC++;
             break;
         case 1:
         case 2:
@@ -375,7 +389,10 @@ DEFINE_INSTR(ski){
 DEFINE_INSTR(sko){
     switch(regState->SC){
         case 0:
-            if(regState->FGO == 1) regState->PC++;
+            pthread_mutex_lock(&outputMutex);
+            word FGO = regState->FGO;
+            pthread_mutex_unlock(&outputMutex);
+            if(FGO == 1) regState->PC++;
             break;
         case 1:
         case 2:

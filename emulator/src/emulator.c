@@ -10,6 +10,8 @@
 
 
 word memory[MEMORY_SIZE];
+pthread_mutex_t inputMutex;
+pthread_mutex_t outputMutex;
 
 int instrToStr(char *outBuffer, word memoryWord){
     switch(GET_TYPE(memoryWord)){
@@ -130,8 +132,10 @@ int main(int argc, char *argv[]){
         return 0;
     }
 
-    if(dontRun) enterRawMode();
+    if(dontRun) 
+        enterRawMode();
     registers regs = {0};
+
     initRegisters(&regs, atoi(argv[2]));
     //processor(&regs, memory, dontRun);
 // Creating the threads
@@ -145,6 +149,10 @@ int main(int argc, char *argv[]){
         .memory = memory,
         .regState = &regs
     };
+
+    pthread_mutex_init(&inputMutex, NULL);
+    pthread_mutex_init(&outputMutex, NULL);
+
     pthread_create(&teleprinterOutTh, NULL, &teleprinterOutputThread, (void*)&regs);
     pthread_create(&teleprinterInTh, NULL, &teleprinterInputThread, (void*)&regs);
     pthread_create(&processorTh, NULL, processorThread, (void *)&pArgs);
@@ -153,7 +161,8 @@ int main(int argc, char *argv[]){
     pthread_join(teleprinterInTh, NULL);
     pthread_join(processorTh, NULL);
 
-    if(dontRun) leaveRawMode();
+    if(dontRun) 
+        leaveRawMode();
 
     if(outBin[0] != 0) {
         if(!memoryDumpBin(outBin, memory, MEMORY_SIZE))

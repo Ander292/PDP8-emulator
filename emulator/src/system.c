@@ -12,6 +12,7 @@ void moveCursorPos(int x, int y){
 
 #if defined WINDOWS
 #include <windows.h>
+#include <conio.h>
 DWORD oldMode;
 
 void enterRawMode(){
@@ -33,6 +34,23 @@ void leaveRawMode(){
 
 void sleepF(unsigned long miliseconds){
     Sleep(miliseconds);
+}
+
+byte pollInput(unsigned long timeoutMS){
+    unsigned long elapsed = 0;
+    unsigned long interval = 50;
+
+    while(elapsed < timeoutMS){
+        if(_kbhit()){
+            byte c = _getch();
+            if(c == 0) c = _getch();
+            //printf("\npollInput reports %d:%c\n", c, c);
+            return c;
+        }
+        Sleep(interval);
+        elapsed += interval;
+    }
+    return 0;
 }
 
 /*

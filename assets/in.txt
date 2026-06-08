@@ -1,26 +1,2 @@
-;; Program štampa sva slova engleske abecede
-
-;; Provjera uslova (limit - tren)
-200 LDA 300
-201 CMA
-202 ADD 301
-203 SNA
-204 BUN 207 ;; Skok na tijelo
-205 BUN 218 ;; Skok na kraj
-;; Tijelo petlje 
-207 LDA 300 ;; Učitavam trenutni karakter
-208 SKO     ;; Ako je output spreman preskačem
-209 BUN 208 ;; Vrtim ako nije
-210 OUT     ;; Štampam
-211 INC     ;; Inkrementiram
-212 STA 300 ;; Čuvam novu vrijednost
-213 LDA 302 ;; Učitavam razmak
-214 SKO     ;; Ako je output spreman preskačem
-215 BUN 214 ;; Ako nije vrtim
-216 OUT     ;; Štampam
-217 BUN 200 ;; Skok na provjeru uslova
-218 HLT     ;; Kraj
-
-300 DEC 33  ;; Prvi karakter
-301 DEC 126 ;; Limit
-302 DEC 32  ;; Razmak
+200 INC
+201 BUN 200

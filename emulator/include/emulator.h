@@ -2,6 +2,7 @@
 #define EMULATOR_H
 
 #include <stdint.h> // For typedefs
+#include <pthread.h>
 
 #define MEMORY_SIZE 4096
 #define WORD_SIZE 2
@@ -37,6 +38,9 @@ typedef union instr{
     } parts;
 } instr;
 
+extern pthread_mutex_t inputMutex;
+extern pthread_mutex_t outputMutex;
+
 typedef struct registers{
     word PC : 12;
     struct{
@@ -54,13 +58,13 @@ typedef struct registers{
         word R : 1; // FR cycle
         
 
-        word IEN : 1; // Interrupt
-        word FGI : 1; // Input ready
-        word FGO : 1; // Output ready
+        volatile word IEN : 1; // Interrupt
+        volatile word FGI : 1; // Input ready for transfer
+        volatile word FGO : 1; // Output available
     };
     struct{
-        word INPR : 8;  // Input register
-        word OUTR : 8;  // Output register
+        volatile word INPR : 8;  // Input register
+        volatile word OUTR : 8;  // Output register
     };
 } registers, *pRegisters;
 
@@ -72,16 +76,31 @@ typedef struct processorArgs{
     int debugMode;
 } processorArgs;
 
+void ErrorExit(char *str);
+
+/*
+    Processor.c functions
+*/
+
 void processor(registers *regState, word *memory, int debugMode);
 void *processorThread(void *args);
 
-void ErrorExit(char *str);
 
+
+/*
+    System.c functions
+*/
 void enterRawMode();
 void leaveRawMode();
+byte pollInput(unsigned long timeoutMS);
+
+/*
+    Teleprinter
+*/
 
 void *teleprinterOutputThread(void *args);
 void *teleprinterInputThread(void *args);
+
 /*
     Individual instruction function declarations
 */
