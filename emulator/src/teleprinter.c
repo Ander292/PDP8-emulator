@@ -53,8 +53,8 @@ void teleprinterIn(pRegisters regState){
                 regState->INPR = c;
                 regState->FGI = 1; // The program is now ready to read input
             }
-            pthread_mutex_unlock(&inputMutex);
         }
+        pthread_mutex_unlock(&inputMutex);
         sleepF(POLL_TIMEOUT);
     }
 }
