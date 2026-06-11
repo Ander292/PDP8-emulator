@@ -10,8 +10,8 @@
     For other types of loaders assembler program will have to be rewriten to actually
     do something
 */
-void rawLoader(word *memory, word *rawContent){
-    for(word i = 0; i < MEMORY_SIZE; i++){
+void rawLoader(word *memory, word *rawContent, size_t copySize){
+    for(word i = 0; i < copySize; i++){
         memory[i] = rawContent[i];
     }
 }

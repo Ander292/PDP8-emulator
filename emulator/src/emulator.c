@@ -143,12 +143,9 @@ int main(int argc, char *argv[]){
     registers regs = {0};
 
     initRegisters(&regs, atoi(argv[2]));
-    //processor(&regs, memory, dontRun);
+
 // Creating the threads
     pthread_t processorTh, teleprinterOutTh, teleprinterInTh;
-    // pthread_attr_t attr = {0};
-    // pthread_attr_init(&attr);
-    // pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
     processorArgs pArgs = {
         .debugMode = dontRun,
@@ -158,20 +155,14 @@ int main(int argc, char *argv[]){
 
     pthread_mutex_init(&inputMutex, NULL);
     pthread_mutex_init(&outputMutex, NULL);
-    //pthread_cond_init(&outCondition, NULL);
 
     pthread_create(&teleprinterOutTh, NULL, &teleprinterOutputThread, (void*)&regs);
     pthread_create(&teleprinterInTh, NULL, &teleprinterInputThread, (void*)&regs);
     pthread_create(&processorTh, NULL, &processorThread, (void *)&pArgs);
-    // pthread_attr_destroy(&attr);
+
     pthread_join(processorTh, NULL);
     pthread_join(teleprinterInTh, NULL);
     
-    // pthread_mutex_lock(&outputMutex);
-    //     regs.FGO = 1;
-    // pthread_mutex_unlock(&outputMutex);
-    //pthread_cond_broadcast(&outCondition);
-
     pthread_join(teleprinterOutTh, NULL);
 
     if(dontRun) 
