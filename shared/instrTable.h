@@ -1,6 +1,7 @@
 #ifndef INSTR_TABLE_H
 #define INSTR_TABLE_H
 #include "instr.h"
+#include "shared.h"
 /*
     The translation table that is used when an instruction string 
     is needed to be translated into the relevant instruction code.
@@ -8,7 +9,7 @@
 
 typedef struct translation_info{
     char name[5];
-    unsigned short number;
+    word number;
 } TranslInfo;
 
 TranslInfo MemoryInstrTable[] = { // Only 4 bits, the rest is operand

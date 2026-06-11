@@ -4,9 +4,7 @@
 #include <pthread.h>
 
 
-#define MEMORY_INSTRUCTION 0
-#define REGISTER_INSTRUCTION 1
-#define IO_INSTRUCTION 2
+
 
 #define GET_TYPE(memWord) ((GET_INSTRUCTION(memWord) & 0x7) != 7 ? MEMORY_INSTRUCTION : (GET_INSTRUCTION(memWord) & 0x8 ? IO_INSTRUCTION : REGISTER_INSTRUCTION))
 #define GET_INSTRUCTION(memWord) (((memWord) >> 12) & 0xF)

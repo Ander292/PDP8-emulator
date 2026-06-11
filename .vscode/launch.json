@@ -5,19 +5,15 @@
             "name": "(gdb) Debugger Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/emulator.exe",
+            "program": "${workspaceFolder}/build/bin/assembler.exe",
             "args": [
-                "build/work/out.bin",
-                "200",
-                "-p",
-                "build/work/pre.csv",
-                "-c",
-                "build/work/post.csv"
+                "assets/in.txt",
+                "build/work/outDBG.bin"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "miDebuggerPath": "gdb",
             "setupCommands": [

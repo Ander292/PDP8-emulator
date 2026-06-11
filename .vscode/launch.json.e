@@ -5,15 +5,19 @@
             "name": "(gdb) Debugger Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/assembler.exe",
+            "program": "${workspaceFolder}/build/bin/emulator.exe",
             "args": [
-                "assets/primjerA.pdp",
-                "build/work/outDBG.bin"
+                "build/work/out.bin",
+                "200",
+                "-p",
+                "build/work/pre.csv",
+                "-c",
+                "build/work/post.csv"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": false,
+            "externalConsole": true,
             "MIMode": "gdb",
             "miDebuggerPath": "gdb",
             "setupCommands": [

@@ -4,6 +4,14 @@
     of manually typing in the instruction codes.
 */
 
+#define MEMORY_INSTRUCTION 0
+#define REGISTER_INSTRUCTION 1
+#define IO_INSTRUCTION 2
+
+/* Used by the assembler to identify the non-instruction
+   directives passed to it. */
+#define TRANSLATION_MACRO 3
+
 /* 
     Memory instructions
     Format: [I][Code][Operand]
@@ -19,6 +27,9 @@
     #define ISZ 0x6U
 
     // The indirect instruction codes written manually if ever needed
+
+    #define INDIRECTION_FLAG 0x8U
+    #define INSTR_INDIRECT(instr) ((instr) | INDIRECTION_FLAG)
 
     #define IAND 0x8U
     #define IADD 0x9U

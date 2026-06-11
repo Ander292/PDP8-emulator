@@ -4,7 +4,7 @@
 #include "instrTable.h"
 
 //------------Typedefs------------//
-
+#if 0
 typedef struct lineOg{
     short address;
     char name[5];
@@ -21,7 +21,14 @@ typedef struct lineT{
         } parts;
     };
 } lineT;
+#else
+typedef struct lineT{
+    word type;
+    word address;
 
-
+    word opCode;
+    word operand;
+} lineT;
+#endif
 
 #endif
