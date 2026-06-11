@@ -1,0 +1,3 @@
+Static loader:
+
+Reads one word at a time

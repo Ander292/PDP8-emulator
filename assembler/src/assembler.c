@@ -1,7 +1,11 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <locale.h>
+
 #include "assembler.h"
 #include "shared.c"
-
-
 
 lineT TranslateInstruction(lineOg l){
     lineT Result = {

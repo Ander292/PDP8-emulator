@@ -1,11 +1,8 @@
 #ifndef EMULATOR_H
 #define EMULATOR_H
 
-#include <stdint.h> // For typedefs
 #include <pthread.h>
 
-#define MEMORY_SIZE 4096
-#define WORD_SIZE 2
 
 #define MEMORY_INSTRUCTION 0
 #define REGISTER_INSTRUCTION 1
@@ -28,11 +25,9 @@
 #define LOAD_PROGRAM(memB, loadB) rawLoader(memB, loadB, MEMORY_SIZE)
 
 #include "instr.h"
+#include "shared.h"
 
 //----------------------------------------------------------------------//
-
-typedef uint16_t word;
-typedef uint8_t byte;
 
 typedef union instr{
     word val;
