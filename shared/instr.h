@@ -11,6 +11,7 @@
 /* Used by the assembler to identify the non-instruction
    directives passed to it. */
 #define TRANSLATION_MACRO 3
+#define TRANSLATION_SKIP 600
 
 /* 
     Memory instructions

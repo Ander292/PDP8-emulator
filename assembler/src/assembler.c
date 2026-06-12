@@ -24,47 +24,59 @@ int translInstr(char *instrStr, char *operandStr, word *outCode, word *outType, 
     if(instrStr == NULL || outCode == NULL || outType == NULL || outOperand == NULL)
         return -1; // If any arg is null, return error
     
-    char instr[8];
-    char oprnd[8];
+    char instr[16]; int iPos = 0;
+    char oprnd[16];
 
     for(int i = 0; instrStr[i] != '\000'; i++){
-        if(instrStr[i] != '*')
-            instr[i] = instrStr[i] & 0xDF; // toUpper
-    }
+        char c = 0;
+        if(IS_LETTER(instrStr[i])) c = instrStr[i] & 0xDF; // toUpper
+        else if(instrStr[i] == '*') {
+            instr[iPos++] = instrStr[i];
+            instr[iPos++] = ' ';
+            continue;
+        }
+        else c = instrStr[i];
 
+        instr[iPos++] = c;
+    }
+    instr[iPos] = 0;
+    
     if(instrStr[3] == '*'){
         //strncpy(instr, instrStr, 4);
-        instr[4] = ' ';
-        instr[5] = 0;
+        // instr[3] = ' ';
+        // instr[4] = 0;
         strcpy(oprnd, instrStr + 4);
+        instr[4] = 0;
     }
     else{
-        strcpy(instr, instrStr);
+        // strcpy(instr, instrStr);
         strcpy(oprnd, operandStr);
     }
 
     if(oprnd == NULL){
         // Memory or register
-        for(int i = 0; i < sizeof(RegisterInstrTable) / sizeof(TranslInfo); i++){
+        for(unsigned int i = 0; i < sizeof(RegisterInstrTable) / sizeof(TranslInfo); i++){
             if(!strcmp(instr, RegisterInstrTable[i].name)){
                 *outCode = RegisterInstrTable[i].number;
                 *outType = REGISTER_INSTRUCTION;
+                *outOperand = 0;
                 goto END;
             }
         }
-        for(int i = 0; i < sizeof(IoInstrTable) / sizeof(TranslInfo); i++){
+        for(unsigned int i = 0; i < sizeof(IoInstrTable) / sizeof(TranslInfo); i++){
             if(!strcmp(instr, IoInstrTable[i].name)){
                 *outCode = IoInstrTable[i].number;
                 *outType = IO_INSTRUCTION;
+                *outOperand = 0;
                 goto END;
             }
         }
         goto ERROR; // Didnt find it
     }else{
-        for(int i = 0; i < sizeof(MemoryInstrTable) / sizeof(TranslInfo); i++){
+        for(unsigned int i = 0; i < sizeof(MemoryInstrTable) / sizeof(TranslInfo); i++){
             if(!strcmp(instr, MemoryInstrTable[i].name)){
                 *outCode = MemoryInstrTable[i].number;
-                *outOperand = strtoul(operandStr, NULL, convMode);
+                *outOperand = strtoul(oprnd, NULL, convMode);
                 *outType = MEMORY_INSTRUCTION;
                 goto END;
             }
@@ -73,7 +85,7 @@ int translInstr(char *instrStr, char *operandStr, word *outCode, word *outType, 
     }
 
     ERROR:
-        printf("Didn't find the instruction: %s | %s\n", instrStr, operandStr);
+        printf("Invalid instruction: %s | %s ", instrStr, operandStr);
         return 1;
     END:
         return 0;
@@ -88,7 +100,7 @@ lineT splitLine(char *src){
         if(src[srcPos] == ';'){
             pos++;
             srcPos++;
-            break;
+            return (lineT){.address = 0, .opCode = 0, .operand = 0, .type = TRANSLATION_SKIP };
         }
 
         tempBuffer[pos++] = src[srcPos];
@@ -102,61 +114,62 @@ lineT splitLine(char *src){
     lineT result;
     // char operandBuffer[8];
     // char instrName[8];
-    
+
     char *adrBuffer = strtok(tempBuffer, " ");
     char *instrName = strtok(NULL, " ");
     char *operandBuffer = strtok(NULL, " ");
 
     result.address = strtoul(tempBuffer, NULL, convMode);
-    translInstr(instrName, operandBuffer, &result.opCode, &result.type, &result.operand);
+
+    if(translInstr(instrName, operandBuffer, &result.opCode, &result.type, &result.operand)){
+        printf("(%d)\n", result.address);
+    }
 
     return result;
 }
 
-#if 0
-lineT translInstr(lineOg l){
-    lineT result = {
-        .address = l.address
-    };
-
-    if(l.operand != 0){
-        for(int i = 0; i < (int)sizeof(MemoryInstrTable) / (int)sizeof(TranslInfo); i++){
-            if(!strcmp(l.name, MemoryInstrTable[i].name)){
-                result.parts.instr = MemoryInstrTable[i].number;
-                result.parts.opernd = l.operand;
-                break;
-            }
-        }
-        if(!strcmp(l.name, "DEC") || !strcmp(l.name, "HEX")){
-            result.instr = l.operand; // Just a number
-        }
-    }
-    else{
-        for(int i = 0; i < (int)sizeof(RegisterInstrTable) / (int)sizeof(TranslInfo); i++){
-            if(!strcmp(l.name, RegisterInstrTable[i].name)){
-                result.instr = RegisterInstrTable[i].number;
-                goto END;
-            }
-        }
-        for(int i = 0; i < (int)sizeof(IoInstrTable) / (int)sizeof(TranslInfo); i++){
-            if(!strcmp(l.name, IoInstrTable[i].name)){
-                result.instr = IoInstrTable[i].number;
-                goto END;
-            }
-        }
+word lineToBin(lineT src){
+    word result = 0;
+    switch(src.type){
+        case MEMORY_INSTRUCTION:
+            result = (src.opCode << 12) | src.operand;
+            break;
+        case REGISTER_INSTRUCTION:
+            result = src.opCode;
+            break;
+        case IO_INSTRUCTION:
+            result = src.opCode;
+            break;
+        default:
+            printf("Fatal error, non instruction sent for translation: (%d) %d %d %d\n", 
+                src.address, src.type, src.opCode, src.operand);
+            break;
     }
 
-    END:
     return result;
 }
-#endif
 
 size_t assemble(char *source, word *out, size_t inSize){
     size_t result = 0;
 
-    char *test = "250 HEX c";
-    lineT split = splitLine(test);
-    //printf("%d %s %d", split.address, split.name, split.operand);
+    int lCount = LineCount(source, inSize);
+    lineT *instrArr = malloc(sizeof(lineT) * lCount);
+    int pos = 0;
+
+    char *focus = strtok(source, "\r\n");
+    while(focus != NULL){
+        instrArr[pos++] = splitLine(focus);
+
+        focus = strtok(NULL, "\r\n");
+    }
+    
+
+    for(int i = 0; i < lCount; i++){
+        out[result] = lineToBin(instrArr[i]);
+        result += 2;
+    }
+
+    return result;
 }
 
 int main(int argc, char *argv[]){
@@ -198,16 +211,7 @@ int main(int argc, char *argv[]){
     fileBuffer[feedback] = '\000';
     fclose(inF);
 
-    //size_t finalSize = assemble(fileBuffer, binary, feedback);
-
-
-    word outCode;
-    word outType;
-    word outOperand;
-
-    int n = translInstr("BUN*300", NULL, &outCode, &outType, &outOperand);
-
-    printf("%d %d %d %d", n, outCode, outType, outOperand);
+    size_t finalSize = assemble(fileBuffer, binary, feedback);
 
     fclose(outF);
     free(fileBuffer);
