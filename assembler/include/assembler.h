@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "instrTable.h"
+#include "shared.h"
 
 //------------Typedefs------------//
 #if 0
@@ -29,6 +29,13 @@ typedef struct lineT{
     word opCode;
     word operand;
 } lineT;
+
+typedef struct lineOg{
+    word address;
+    char name[5];
+    word operand;
+} lineOg;
+
 #endif
 
 #endif

@@ -1,7 +1,3 @@
-;;potprogram x pretvara u x/2
-;;program niz od 10 elemenata i za svaki poziva potprogram
-
-;; Inicijalizacija
 200 CLA
 201 STA 248
 ;; Provjera uslova (cnt < len) => (cnt - len < 0) => (-len + cnt < 0)

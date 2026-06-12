@@ -46,4 +46,12 @@ TranslInfo IoInstrTable[] = { // 4 bytes, has no operand
     {"IOF", IOF}
 };
 
+#define DEC_M 0
+#define HEX_M 1
+
+TranslInfo MacroTable[] = {
+    {"DEC", DEC_M},
+    {"HEX", HEX_M}
+};
+
 #endif //INSTR_TABLE_H
