@@ -20,7 +20,7 @@
 
 #define GET_CYCLE_STRING(n) ((n == CYCLE_FETCH ? "FETCH" : (n == CYCLE_INDIRECT ? "INDIRECT" : (n == CYCLE_EXECUTE ? "EXECUTE" : "INTERRUPT"))))
 
-#define LOAD_PROGRAM(memB, loadB) rawLoader(memB, loadB, MEMORY_SIZE)
+#define LOAD_PROGRAM(memB, loadB) absoluteLoader(memB, loadB, MEMORY_SIZE)
 
 #include "instr.h"
 #include "shared.h"
@@ -37,7 +37,7 @@ typedef union instr{
 
 extern pthread_mutex_t inputMutex;
 extern pthread_mutex_t outputMutex;
-extern pthread_cond_t outCondition;
+//extern pthread_cond_t outCondition;
 
 typedef struct registers{
     word PC : 12;
@@ -102,7 +102,7 @@ void *teleprinterInputThread(void *args);
     Loader
 */
 void rawLoader(word *memory, word *rawContent, size_t copySize);
-
+word absoluteLoader(word *memory, word *rawContent, size_t copySize);
 
 /*
     Individual instruction function declarations

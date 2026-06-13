@@ -26,12 +26,23 @@ void rawLoader(word *memory, word *rawContent, size_t copySize){
 
     4) Last chunk that is about to be loaded ends with [FFFF]
     5) Finally the address where the program should start is loaded
-
-    TODO: Write this ASAP
 */
 
-void absoluteLoader(word *memory, word *rawContent, size_t copySize){
-    return;
+word absoluteLoader(word *memory, word *rawContent, size_t copySize){
+    int currentAdr = -6000;
+    size_t i = 0;
+    for(; rawContent[i] != 0xFFFF; i++){
+        if(currentAdr == -6000) {
+            currentAdr = rawContent[i];
+        }else if(rawContent[i] == 0x7777){
+            currentAdr = -6000;
+        }else{
+            memory[currentAdr++] = rawContent[i];
+        }
+    }
+
+
+    return rawContent[i+1]; /* Start address */
 }
 
 /*

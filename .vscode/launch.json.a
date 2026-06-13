@@ -8,7 +8,10 @@
             "program": "${workspaceFolder}/build/bin/assembler.exe",
             "args": [
                 "assets/in.txt",
-                "build/work/outDBG.bin"
+                "-o",
+                "build/work/out.bin",
+                "-s",
+                "250"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

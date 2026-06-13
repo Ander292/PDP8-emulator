@@ -227,12 +227,12 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildEmulator" ) -OR ( $mode -eq "buil
 
 if ( ( $mode -eq "full" ) -OR ( $mode -eq "runAssembler" ) ) {
     Write-Host "Running program..."
-    & "$OutputExeA" "assets/in.txt" "build/work/out.bin"
+    & "$OutputExeA" "assets/in.txt" -o "build/work/out.bin" -s 200
 }
 
 if ( ( $mode -eq "full" ) -OR ( $mode -eq "runEmulator" ) ) {
     Write-Host "Running program..."
-    & "$OutputExeE" "build/work/out.bin" 200 -p "build/work/pre.csv" -c "build/work/out.csv"
+    & "$OutputExeE" "build/work/out.bin" -p "build/work/pre.csv" -c "build/work/out.csv"
 }
 
 if ($mode -eq "run"){

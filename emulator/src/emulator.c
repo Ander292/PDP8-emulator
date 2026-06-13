@@ -60,7 +60,7 @@ int memoryDumpCsv(const char *outPath, const word *mem, size_t size){
     for(size_t i = 0; i < size; i++){
         char buffer[16];
         if(instrToStr(buffer, memory[i]) == -1) errcode++;
-        fprintf(outF, "%u,DEC %d,HEX %x,%s\n", i, memory[i], memory[i], buffer);
+        fprintf(outF, "%llu,DEC %d,HEX %x,%s\n", i, memory[i], memory[i], buffer);
     }
 
     fclose(outF);
@@ -79,26 +79,32 @@ int memoryDumpBin(const char *outPath, const word *mem, size_t size){
     return 0;
 }
 
-int processArgs(int argc, char *argv[], char *outCsv, char *outBin, char *outPre){
+int processArgs(int argc, char *argv[], char **outCsv, char **outBin, char **outPre){
     int result = 0;
     for(int i = 0; i < argc; i++){
-        if(!strcmp(argv[i], "-c")){
-            strcpy(outCsv, argv[++i]);
-        }
-        if(!strcmp(argv[i], "-b")){
-            strcpy(outBin, argv[++i]);
-        }
-        if(!strcmp(argv[i], "-p")){
-            strcpy(outPre, argv[++i]);
-        }
-        if(!strcmp(argv[i], "-n")){
-            result = -1;
-        }
-        if(!strcmp(argv[i], "-d") && result == 0){
-            result = 1;
+        if(*argv[i] == '-'){
+            switch(argv[i][1] | 0x20){
+                case 'c':
+                    *outCsv = argv[++i];
+                    break;
+                case 'b':
+                    *outBin = argv[++i];
+                    break;
+                case 'p':
+                    *outPre = argv[++i];
+                    break;
+                case 'n':
+                    result = -1;
+                    break;
+                case 'd':
+                    if(result == 0) result = 1;
+                    break;
+                default:
+                    printf("Invalid flag: %s\n", argv[i]);
+            }
         }
     }
-
+    
     return result;
 }
 
@@ -106,7 +112,7 @@ int main(int argc, char *argv[]){
     setlocale(LC_ALL, ".UTF8");
 
     if(argc < 3){
-        printf("Usage: %s <FilePath> <StartingAddress> [-p <outPreCsv> -c <outCsv> -b <outBin> -n]\n"
+        printf("Usage: %s <FilePath> [-p <outPreCsv> -c <outCsv> -b <outBin> -n]\n"
                 "-p <outPreCsv> is the path of the csv memory dump before the program starts, useful for seeing if the program is properly assembled\n"
                 "-c <outCsv> is the path of the post run csv memory dump\n"
                 "-b <outBin> is the path of the post run binary memory dump (the memory is written to a file in the same way it was kept internally)\n"
@@ -114,11 +120,11 @@ int main(int argc, char *argv[]){
                 "-d is passed to run in debug mode", argv[0]);
         return 1;
     }
-    char outCsv[256] = {0};
-    char outBin[256] = {0};
-    char outPre[256] = {0};
+    char *outCsv = NULL;
+    char *outBin = NULL;
+    char *outPre = NULL;
 
-    int dontRun = processArgs(argc, argv, outCsv, outBin, outPre);
+    int dontRun = processArgs(argc, argv, &outCsv, &outBin, &outPre);
 
     FILE *f = fopen(argv[1], "rb");
     if(f == NULL) ErrorExit("Fatal error opening bin file!");
@@ -126,9 +132,9 @@ int main(int argc, char *argv[]){
     size_t size = fread(loadBuffer, sizeof(word), sizeof(loadBuffer)/sizeof(word), f);
     if(size == 0) ErrorExit("Size was 0");
 
-    LOAD_PROGRAM(memory, loadBuffer);
+    word startAddr = LOAD_PROGRAM(memory, loadBuffer);
 
-    if(outPre[0] != 0) {
+    if(outPre != NULL) {
         int result = memoryDumpCsv(outPre, memory, MEMORY_SIZE);
         if(result != -1)
             printf("Wrote pre-run memDump(%d) to path: %s\n", result, outPre);
@@ -142,7 +148,7 @@ int main(int argc, char *argv[]){
         enterRawMode();
     registers regs = {0};
 
-    initRegisters(&regs, atoi(argv[2]));
+    initRegisters(&regs, startAddr);
 
 // Creating the threads
     pthread_t processorTh, teleprinterOutTh, teleprinterInTh;
@@ -168,11 +174,11 @@ int main(int argc, char *argv[]){
     if(dontRun) 
         leaveRawMode();
 
-    if(outBin[0] != 0) {
+    if(outBin != NULL) {
         if(!memoryDumpBin(outBin, memory, MEMORY_SIZE))
             printf("Wrote post-run binary memDump to path: %s\n", outBin);
     }
-    if(outCsv[0] != 0) {
+    if(outCsv != NULL) {
         int result = memoryDumpCsv(outCsv, memory, MEMORY_SIZE);
         if(result != -1)
             printf("Wrote post-run csv memDump(%d) to path: %s\n", result, outCsv);

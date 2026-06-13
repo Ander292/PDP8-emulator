@@ -157,14 +157,84 @@ lineT translateLine(lineOg og){
     return result;
 }
 
-size_t assemble(char *raw, word *bin, size_t size){
+word generateWord(lineT line){
+    word result = 0;
+    switch(line.type){
+        case MEMORY_INSTRUCTION:
+            result = (line.opCode << 12) | (line.operand);
+            break;
+        case REGISTER_INSTRUCTION:
+        case IO_INSTRUCTION:
+            result = line.opCode;
+            break;
+        case TRANSLATION_MACRO:
+            if(line.opCode == DEC_M || line.opCode == HEX_M)
+                result = line.operand;
+            else printf("Invalid macro\n");
+            break;
+        default:
+            printf("Invalid type\n");
+            break;
+    }
+
+    return result;
+}
+size_t createBinaryRaw(lineList *listT){
     size_t result = 0;
+    lineT line = deleteFrontT(listT);
+    while(line.type != TRANSLATION_SKIP){
+        result += 2;
+        word finalWord = generateWord(line);
+        
+        binary[line.address] = finalWord;
+        line = deleteFrontT(listT);
+    }
+
+    freeList(listT);
+
+    return result;
+}
+
+/* For absolute loader */
+size_t createBinaryAbs(lineList *listT, word entryPoint){
+    size_t result = 0;
+    int segCount = 0;
+
+    int addressPrev = -6000; // Constant for no prev address
+    lineT line = deleteFrontT(listT);
+    while(line.type != TRANSLATION_SKIP){
+        /* Determining if the address is sequential or not. If it is, then just write the word. 
+           If not, then write the chunk end and the next address */
+        word final = generateWord(line);
+
+        if(addressPrev + 1 == line.address){
+            binary[result++] = final;
+            addressPrev = line.address;
+        }else{
+            if(segCount) binary[result++] = END_SEGMENT;
+            
+            binary[result++] = line.address;
+            binary[result++] = final;
+            segCount++;
+            addressPrev = line.address;
+        }
+        line = deleteFrontT(listT);
+    }
+    binary[result++] = END_READ;
+    binary[result++] = entryPoint;
+
+    freeList(listT);
+    
+    return result;
+}
+
+size_t assemble(char *raw, word *bin, size_t size, word startAddr){
     /* Tokenizing the input string and creating a linked list of
        all lines */
     lineList listOg = listCreate();
     char *remainder = NULL;
     char *out = tokenize(raw, "\n", &remainder);
-    while(out != NULL){        
+    while(out != NULL){
         lineOg line = extractLine(out);
         if(*(line.name) != 0) insertEndOg(&listOg, line);
         out = tokenize(remainder, "\n", &remainder);
@@ -184,39 +254,34 @@ size_t assemble(char *raw, word *bin, size_t size){
 
     //printList(&listT);
 
-    lineT translLine = deleteFrontT(&listT);
-    while(translLine.type != TRANSLATION_SKIP){
-        result += 2;
-        word finalWord = 0;
-        switch(translLine.type){
-            case MEMORY_INSTRUCTION:
-                finalWord = (translLine.opCode << 12) | (translLine.operand);
-                break;
-            case REGISTER_INSTRUCTION:
-            case IO_INSTRUCTION:
-                finalWord = translLine.opCode;
-                break;
-            case TRANSLATION_MACRO:
-                if(translLine.opCode == DEC_M || translLine.opCode == HEX_M)
-                    finalWord = translLine.operand;
-                else printf("Invalid macro\n");
-                break;
-            default:
-                printf("Invalid type\n");
-        }
-        binary[translLine.address] = finalWord;
-        translLine = deleteFrontT(&listT);
-    }
+    return createBinaryAbs(&listT, startAddr);
+}
 
-    freeList(&listT);
+void getFlags(int argc, char *argv[], char **outPath, int *returnAddress){
+    for(int i = 0; i < argc; i++){
+        if(argv[i][0] == '-')
+            switch(argv[i][1] | 0x20){
+                case 'o':
+                    *outPath = argv[++i];
+                    break;
+                case 'a':
+                case 's':
+                    *returnAddress = strtoul(argv[++i], NULL, 0);
+                    break;
+                default:
+                    printf("Invalid flag %s\n", argv[i]);
+                    break;
+            }
+    }
 }
 
 int main(int argc, char *argv[]){
     setlocale(LC_ALL, ".UTF8");
 
-    if(argc != 2 && argc != 3){
-        printf("Usage: %s <FilePath> [OutPath]\n"
-                "If [OutPath] is not given then the program will create <FilePath>.bin", argv[0]);
+    if(argc < 2 && argc > 4){
+        printf("Usage: %s <FilePath> -o [OutPath] -a [StartAddres]\n"
+                "If [OutPath] is not given then the program will create <FilePath>.bin\n"
+                "If [StartAddres] is not given it will be set to 200", argv[0]);
         return 1;
     }
 
@@ -229,14 +294,17 @@ int main(int argc, char *argv[]){
     /* If the out file is given as an arg then write to it. If not then create
        a file of same name as input file but with .bin extension */
     char outPath[256];
-    if(argc == 2){
+    char *fileOut = NULL;
+    int startAddr = 200;
+
+    getFlags(argc, argv, &fileOut, &startAddr);
+    
+    if(fileOut == NULL){
         nameInfo ni = separateFileName(argv[1]);
         joinRoot(outPath, ni.path, ni.name);
         strcat(outPath, ".bin");
     }
-    else{
-        strcpy(outPath, argv[2]);
-    }
+    else strcpy(outPath, fileOut);
 
     FILE *outF = fopen(outPath, "wb");
     if(outF == NULL){
@@ -254,31 +322,8 @@ int main(int argc, char *argv[]){
     fileBuffer[feedback] = '\000';
     fclose(inF);
 
-#ifndef DEBUG
-    size_t finalSize = assemble(fileBuffer, binary, feedback);
-
+    size_t finalSize = assemble(fileBuffer, binary, feedback, (word)startAddr);
     fwrite(binary, sizeof(word), MEMORY_SIZE, outF);
-#else // WIP, TESTING
-    #if 0
-        lineList l = listCreate();
-        lineT l1 = (lineT){1, 200, 15, 300};
-        lineT l2 = (lineT){2, 201, 15, 300};
-        lineT l3 = (lineT){1, 200, 15, 350};
-        insertEndT(&l, l1);
-        insertEndT(&l, l2);
-        insertEndT(&l, l3);
-        lineOg o1 = (lineOg){200, "DEC", 0};
-        lineOg o2 = (lineOg){214, "LDA", 350};
-        lineOg o3 = (lineOg){212, "BUN*", 1405};
-        insertEndOg(&l, o1);
-        insertEndOg(&l, o2);
-        insertEndOg(&l, o3);
-        
-        printList(&l);
-    #endif
-    //printf("%s|%s|%s\n", out1, out2, out3);
-#endif  
-
 
 
     fclose(outF);
