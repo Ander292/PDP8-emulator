@@ -112,7 +112,7 @@ int main(int argc, char *argv[]){
     setlocale(LC_ALL, ".UTF8");
 
     if(argc < 3){
-        printf("Usage: %s <FilePath> [-p <outPreCsv> -c <outCsv> -b <outBin> -n]\n"
+        printf("Usage: %s <FilePath> [-p <outPreCsv> -c <outCsv> -b <outBin> -n -d]\n"
                 "-p <outPreCsv> is the path of the csv memory dump before the program starts, useful for seeing if the program is properly assembled\n"
                 "-c <outCsv> is the path of the post run csv memory dump\n"
                 "-b <outBin> is the path of the post run binary memory dump (the memory is written to a file in the same way it was kept internally)\n"

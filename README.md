@@ -1,11 +1,11 @@
 # What is this
 
-A simple emulator for an old architecture based on old PDP-8, the so called "Elementary computer". Made it so I can run programs from a uni course.
+A simple emulator for an old architecture based on old PDP-8, the so called "Elementary computer". Made it so I can run programs for an uni course.
 The thing has many differences from the real PDP-8 so the repo name is a bit misleading.
 
 # How to use
 
-Just use assembler.exe to create a binary file that the emulator will run. Its not a full assembler as it doesnt support labels and stuff.
+Just use assembler.exe to create a binary file that the emulator will run. Its not a full assembler as it doesnt support labels and stuff for now.
 
 Code example:
 
@@ -22,4 +22,4 @@ Code example:
 
 Input output operations are explained in some examples inside assets folder. Interrupt routine is NOT implemented and will crash the program. IO operations are available only by using the IO instructions directly.
 
-Linux version is completely broken. Ocasional invalid instruction errors happen on completely valid code. Input/Output doesnt work properly.
+Linux version is completely broken. Ocasional invalid instruction errors happen on completely valid code. Input/Output doesnt work properly. The stroul segfaults the program. I will have to look into this.
