@@ -96,9 +96,9 @@ lineOg extractLine(char *line){
     //printf("%s|%s|%s\n", addr, instr, oprnd);
     lineOg result;
     result.address = strtoul(addr, NULL, convMode);
-    if(!strcmp("HEX", result.name))
+    if(!strcmp("HEX", instr))
         result.operand = strtoul(oprnd, NULL, 16);
-    else if(!strcmp("DEC", result.name))
+    else if(!strcmp("DEC", instr))
         result.operand = strtoul(oprnd, NULL, 10);
     else
         result.operand = strtoul(oprnd, NULL, convMode);
@@ -156,6 +156,7 @@ lineT translateLine(lineOg og){
     END:
     return result;
 }
+
 size_t assemble(char *raw, word *bin, size_t size){
     size_t result = 0;
     /* Tokenizing the input string and creating a linked list of
