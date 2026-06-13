@@ -104,7 +104,7 @@ int processArgs(int argc, char *argv[], char **outCsv, char **outBin, char **out
             }
         }
     }
-    
+
     return result;
 }
 

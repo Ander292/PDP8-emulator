@@ -3,9 +3,6 @@
 
 #include <pthread.h>
 
-
-
-
 #define GET_TYPE(memWord) ((GET_INSTRUCTION(memWord) & 0x7) != 7 ? MEMORY_INSTRUCTION : (GET_INSTRUCTION(memWord) & 0x8 ? IO_INSTRUCTION : REGISTER_INSTRUCTION))
 #define GET_INSTRUCTION(memWord) (((memWord) >> 12) & 0xF)
 #define GET_OPERAND(memWord) ((memWord) & 0x0FFF)
@@ -20,7 +17,7 @@
 
 #define GET_CYCLE_STRING(n) ((n == CYCLE_FETCH ? "FETCH" : (n == CYCLE_INDIRECT ? "INDIRECT" : (n == CYCLE_EXECUTE ? "EXECUTE" : "INTERRUPT"))))
 
-#define LOAD_PROGRAM(memB, loadB) absoluteLoader(memB, loadB, MEMORY_SIZE)
+#define LOAD_PROGRAM(memB, loadB) relativeLoader(memB, loadB, MEMORY_SIZE)
 
 #include "instr.h"
 #include "shared.h"
@@ -103,6 +100,7 @@ void *teleprinterInputThread(void *args);
 */
 void rawLoader(word *memory, word *rawContent, size_t copySize);
 word absoluteLoader(word *memory, word *rawContent, size_t copySize);
+word relativeLoader(word *memory, word *rawContent, size_t copySize);
 
 /*
     Individual instruction function declarations

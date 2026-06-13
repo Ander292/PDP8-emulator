@@ -56,6 +56,26 @@ word absoluteLoader(word *memory, word *rawContent, size_t copySize){
     4) Last chunk ends with [FFFF] followed by the address at which the program starts
 */
 
-void relativeLoader(word *memory, word *rawContent, size_t copySize){
-    return;
+word relativeLoader(word *memory, word *rawContent, size_t copySize){
+    int currentAdr = -6000;
+    word operandOffset= 0;
+    size_t i = 0;
+    for(; rawContent[i] != 0xFFFF; i++){
+        if(currentAdr == -6000){
+            currentAdr = rawContent[i];
+            operandOffset = rawContent[++i];
+        }else if(rawContent[i] == 0x7777){
+            currentAdr = -6000;
+            operandOffset = 0;
+        }else{
+            word final = rawContent[i];
+            if(GET_TYPE(final) == MEMORY_INSTRUCTION){
+                word operand = GET_OPERAND(final) + operandOffset;
+                final = ((final & 0xF000) | (operand & 0x0FFF));
+            }
+            memory[currentAdr++] = final;
+        }
+    }
+
+    return rawContent[i+1];
 }

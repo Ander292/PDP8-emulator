@@ -228,6 +228,38 @@ size_t createBinaryAbs(lineList *listT, word entryPoint){
     return result;
 }
 
+size_t createBinaryRel(lineList *listT, word entryPoint){
+    size_t result = 0;
+    int segCount = 0;
+
+    int addressPrev = -6000;
+    lineT line = deleteFrontT(listT);
+
+    while(line.type != TRANSLATION_SKIP){
+        word final = generateWord(line);
+
+        if(addressPrev + 1 == line.address){
+            binary[result++] = final;
+            addressPrev = line.address;
+        }else{
+            if(segCount) binary[result++] = END_SEGMENT;
+
+            binary[result++] = line.address;
+            binary[result++] = 0;
+            binary[result++] = final;
+            segCount++;
+            addressPrev = line.address;
+        }
+        line = deleteFrontT(listT);
+    }
+    binary[result++] = END_READ;
+    binary[result++] = entryPoint;
+
+    freeList(listT);
+
+    return result;
+}
+
 size_t assemble(char *raw, word *bin, size_t size, word startAddr){
     /* Tokenizing the input string and creating a linked list of
        all lines */
@@ -254,7 +286,7 @@ size_t assemble(char *raw, word *bin, size_t size, word startAddr){
 
     //printList(&listT);
 
-    return createBinaryAbs(&listT, startAddr);
+    return createBinaryRel(&listT, startAddr);
 }
 
 void getFlags(int argc, char *argv[], char **outPath, int *returnAddress){
