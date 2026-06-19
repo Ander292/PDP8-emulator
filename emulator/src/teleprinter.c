@@ -20,6 +20,7 @@
 */
 
 void teleprinterOut(pRegisters regState){
+    //puts("Before out!");
     while(regState->S | regState->FGO == 0){
 
         pthread_mutex_lock(&outputMutex);
@@ -31,11 +32,12 @@ void teleprinterOut(pRegisters regState){
         pthread_mutex_unlock(&outputMutex);
         sleepF(POLL_TIMEOUT); 
     }
+    //puts("After out!");
 }
 void *teleprinterOutputThread(void *args){
     teleprinterOut((pRegisters)args);
     //printf("Output is gone...\n");
-    putchar('\n');
+    //putchar('\n');
     return NULL;
 }
 
@@ -45,10 +47,13 @@ void *teleprinterOutputThread(void *args){
 */
 
 void teleprinterIn(pRegisters regState){
+    //puts("Before in!");
     while(regState->S){
         pthread_mutex_lock(&inputMutex);
         if(regState->FGI == 0) {
+            //puts("Called poll");
             byte c = pollInput(POLL_TIMEOUT);
+            //puts("Out of poll");
             if(c != 0) {
                 regState->INPR = c;
                 regState->FGI = 1; // The program is now ready to read input
@@ -57,6 +62,7 @@ void teleprinterIn(pRegisters regState){
         pthread_mutex_unlock(&inputMutex);
         sleepF(POLL_TIMEOUT);
     }
+    //puts("After in!");
 }
 
 

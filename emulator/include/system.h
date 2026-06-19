@@ -26,4 +26,7 @@ typedef struct consoleInfo{
 void moveCursorPos(int x, int y);
 int instrToStr(char *outBuffer, word memoryWord);
 void sleepF(unsigned long miliseconds);
+void enterAux();
+void leaveAux();
+
 #endif

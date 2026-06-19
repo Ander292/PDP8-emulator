@@ -3,6 +3,7 @@
 
     #include "shared.h"
     #include "assembler.h"
+    #include <stddef.h>
 
     #define TYPE_OG 1
     #define TYPE_T 2

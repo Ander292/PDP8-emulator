@@ -100,8 +100,12 @@ lineOg extractLine(char *line){
         result.operand = strtoul(oprnd, NULL, 16);
     else if(!strcmp("DEC", instr))
         result.operand = strtoul(oprnd, NULL, 10);
-    else
-        result.operand = strtoul(oprnd, NULL, convMode);
+    else{
+        if(oprnd == NULL || *oprnd == 0)
+            result.operand = 0;
+        else
+            result.operand = strtoul(oprnd, NULL, convMode);
+    }
 
     strcpy(result.name, instr);
 
@@ -310,10 +314,10 @@ void getFlags(int argc, char *argv[], char **outPath, int *returnAddress){
 int main(int argc, char *argv[]){
     setlocale(LC_ALL, ".UTF8");
 
-    if(argc < 2 && argc > 4){
+    if(argc < 2){
         printf("Usage: %s <FilePath> -o [OutPath] -a [StartAddres]\n"
                 "If [OutPath] is not given then the program will create <FilePath>.bin\n"
-                "If [StartAddres] is not given it will be set to 200", argv[0]);
+                "If [StartAddres] is not given it will be set to 200\n", argv[0]);
         return 1;
     }
 

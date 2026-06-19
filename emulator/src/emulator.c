@@ -60,7 +60,7 @@ int memoryDumpCsv(const char *outPath, const word *mem, size_t size){
     for(size_t i = 0; i < size; i++){
         char buffer[16];
         if(instrToStr(buffer, memory[i]) == -1) errcode++;
-        fprintf(outF, "%llu,DEC %d,HEX %x,%s\n", i, memory[i], memory[i], buffer);
+        fprintf(outF, "%zu,DEC %d,HEX %x,%s\n", i, memory[i], memory[i], buffer);
     }
 
     fclose(outF);
@@ -111,7 +111,7 @@ int processArgs(int argc, char *argv[], char **outCsv, char **outBin, char **out
 int main(int argc, char *argv[]){
     setlocale(LC_ALL, ".UTF8");
 
-    if(argc < 3){
+    if(argc < 2){
         printf("Usage: %s <FilePath> [-p <outPreCsv> -c <outCsv> -b <outBin> -n -d]\n"
                 "-p <outPreCsv> is the path of the csv memory dump before the program starts, useful for seeing if the program is properly assembled\n"
                 "-c <outCsv> is the path of the post run csv memory dump\n"
@@ -144,8 +144,8 @@ int main(int argc, char *argv[]){
         return 0;
     }
 
-    if(dontRun) 
-        enterRawMode();
+    enterRawMode();
+    if(dontRun) enterAux();
     registers regs = {0};
 
     initRegisters(&regs, startAddr);
@@ -166,13 +166,16 @@ int main(int argc, char *argv[]){
     pthread_create(&teleprinterInTh, NULL, &teleprinterInputThread, (void*)&regs);
     pthread_create(&processorTh, NULL, &processorThread, (void *)&pArgs);
 
+    pthread_mutex_unlock(&inputMutex);
+    pthread_mutex_unlock(&outputMutex);
+
     pthread_join(processorTh, NULL);
     pthread_join(teleprinterInTh, NULL);
     
     pthread_join(teleprinterOutTh, NULL);
 
-    if(dontRun) 
-        leaveRawMode();
+    leaveRawMode();
+    if(dontRun) leaveAux();
 
     if(outBin != NULL) {
         if(!memoryDumpBin(outBin, memory, MEMORY_SIZE))

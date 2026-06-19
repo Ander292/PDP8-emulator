@@ -3,11 +3,21 @@
 
 #include <stdio.h>
 
-#define WINDOWS
+#define LINUX
 
 void moveCursorPos(int x, int y){
     printf(ESC_SEQ"%d;%dH", y, x);
     fflush(stdout);
+}
+
+void enterAux(){
+    puts(MOVE_TO_AUX_BUFFER);
+    puts(ESC_HIDE_CURSOR);
+}
+
+void leaveAux(){
+    puts(MOVE_TO_MAIN_BUFFER);
+    puts(ESC_SHOW_CURSOR);
 }
 
 #if defined WINDOWS
@@ -22,13 +32,9 @@ void enterRawMode(){
     oldMode = mode;
     mode = mode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT | ENABLE_INSERT_MODE) | ENABLE_VIRTUAL_TERMINAL_INPUT | ENABLE_PROCESSED_OUTPUT;
     SetConsoleMode(hStdin, mode);
-    puts(MOVE_TO_AUX_BUFFER);
-    puts(ESC_HIDE_CURSOR);
 }
 
 void leaveRawMode(){
-    puts(MOVE_TO_MAIN_BUFFER);
-    puts(ESC_SHOW_CURSOR);
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), oldMode);
 }
 
@@ -105,25 +111,21 @@ struct termios original;
 byte pollInput(unsigned long timeoutMS){
     fd_set readfds; 
     struct timeval timeout;
+    char result = 0;
+    
+    FD_ZERO(&readfds);
+    FD_SET(STDIN_FILENO, &readfds);
 
-    while(1){
-        FD_ZERO(&readfds);
-        FD_SET(STDIN_FILENO, &readfds);
+    timeout.tv_sec = timeoutMS / 1000;
+    timeout.tv_usec = (timeoutMS - timeout.tv_sec * 1000) * 1000;
 
-        // Zero timeout makes the select call return immediately
-        timeout.tv_sec = 0;
-        timeout.tv_usec = 0;
+    int ready = select(STDIN_FILENO + 1, &readfds, NULL, NULL, &timeout);
 
-        int ready = select(STDIN_FILENO + 1, &readfds, NULL, NULL, &timeout);
-
-        if(ready > 0 && FD_ISSET(STDIN_FILENO, &readfds)){
-            char ch;
-            read(STDIN_FILENO, &ch, 1);
-        }else{
-            sleep(1);
-        }
+    if(ready > 0 && FD_ISSET(STDIN_FILENO, &readfds)){
+        read(STDIN_FILENO, &result, 1);
     }
-    return 0;
+
+    return result;
 }
 
 void enterRawMode(){
@@ -136,13 +138,9 @@ void enterRawMode(){
     raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
 
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
-    puts(MOVE_TO_AUX_BUFFER);
-    puts(ESC_HIDE_CURSOR);
 }
 
 void leaveRawMode(){
-    puts(MOVE_TO_MAIN_BUFFER);
-    puts(ESC_SHOW_CURSOR);
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);
 }
 

@@ -1,3 +1,4 @@
+
 ;; Example program printing characters which are inputed
 
 200 CLA     ;; Clearing acc

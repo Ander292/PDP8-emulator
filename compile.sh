@@ -10,7 +10,7 @@ compile() {
     local Sources=()
     local Objs=()
 
-    for file in $SrcDir/*.c;do
+    for file in "$SrcDir"/*.c;do
         Sources+=(`basename "$file"`)
         #ObjC+=(`basename "$file" .c`.obj)
     done
@@ -42,22 +42,22 @@ compile() {
     #compiling
     for file in ${Sources[@]};do
         local CurrentObj=`basename "$file" .c`.obj
-        local args="$SrcDir/$file -c ${IncFlags[@]} $CompilationFlags -o $ObjLocal/$CurrentObj"
+        local args="$SrcDir/$file -c ${IncFlags[@]} ${CompFlags[@]} -o $ObjLocal/$CurrentObj"
         #echo "$args"
         gcc $args
     done
 
     #linking
-    for file in "$ObjLocal/*.obj";do
+    for file in "$ObjLocal"/*.obj;do
         Objs+=( $file )
     done
 
 
-    echo "Linking"
+    echo "Linking $2"
     gcc \
         "${Objs[@]}" \
         "${IncFlags[@]}" \
-        "$LinkFlags" \
+        "${LinkFlags[@]}" \
         -o "$BinDir/$Name"
 }
 
@@ -108,20 +108,20 @@ mkdir "$AssetsDir" 2> /dev/null
 mkdir "$SharedDir" 2> /dev/null
 
 CompilationFlagsA=(
+    "-Wextra"
     #"-Wall"
     #"-pedantic"
-    "-Wextra"
+    #"-g"
     #"-Wconversion"
     #"-Wundef"
     #"-Wstrict-overflow=5"
     #"-fdiagnostics-show-option"
-    "-g"
-    #"-O1"
+    "-O2"
 )
 
 LinkerFlagsA=(
     "-pedantic"
-    "-g"
+    #"-g"
     #"-shared"
     #"-Wl,-Map=outputG.map"
     #"-Wl,--out-implib,libmy_lib.dll.a"
@@ -131,20 +131,21 @@ LinkerFlagsA=(
 
 
 CompilationFlagsE=(
+    "-Wextra"
+    "-fdiagnostics-show-option"
+    #"-g"
+    "-O1"
+    "-Wno-unused-result"
     #"-Wall"
     #"-pedantic"
-    "-Wextra"
     #"-Wconversion"
     #"-Wundef"
     #"-Wstrict-overflow=5"
-    "-fdiagnostics-show-option"
-    "-g"
-    #"-O1"
 )
 
 LinkerFlagsE=(
     "-pedantic"
-    "-g"
+    #"-g"
     #"-shared"
     #"-Wl,-Map=outputG.map"
     #"-Wl,--out-implib,libmy_lib.dll.a"
