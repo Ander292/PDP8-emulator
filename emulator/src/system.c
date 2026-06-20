@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#define LINUX
+#define WINDOWS
 
 void moveCursorPos(int x, int y){
     printf(ESC_SEQ"%d;%dH", y, x);
@@ -77,7 +77,7 @@ byte pollInput(unsigned long timeoutMS){
                 break;
             default:
                 printf("Fatal error : Invalid stdin handle!\n");
-                break; 
+                break;
         }
         Sleep(interval);
         elapsed += interval;
