@@ -22,4 +22,4 @@ Code example:
 
 Input output operations are explained in some examples inside assets folder. Interrupt routine is NOT implemented and will crash the program. IO operations are available only by using the IO instructions directly.
 
-Linux version is completely broken. Ocasional invalid instruction errors happen on completely valid code. Input/Output doesnt work properly. The stroul segfaults the program. I will have to look into this.
+Linux version might not be completely stable.
