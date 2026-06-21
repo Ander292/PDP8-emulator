@@ -1,47 +1,9 @@
-200 CLA
-201 STA 248
-;; Provjera uslova (cnt < len) => (cnt - len < 0) => (-len + cnt < 0)
-202 LDA 250
-203 CMA
-204 ADD 248
-205 SNA
-206 BUN 220 ;; Skok na kraj
-207 BUN 212 ;; Skok na tijelo
-;; Inkrement
-208 LDA 248
-209 INC
-210 STA 248
-211 BUN 202 ;; Skok na provjeru uslova
-;; Tijelo petlje
-212 LDA 249
-213 ADD 248
-214 STA 247
-215 LDA*247
-216 BSA 300
-217 ADD 246
-218 STA 246
-219 BUN 208 ;; Skok na inkrement
-;; kraj
-220 HLT     ;; Kraj programa
+200 LDA 250
+201 CIL
+202 ADD 251
+203 STA 252
+204 HLT
 
-246 DEC 0   ;; Suma polovina elemenat niza
-247 DEC 0   ;; Indir.
-248 DEC 0   ;; cnt
-249 DEC 251 ;; adresa nultog
-250 DEC 10  ;; dužina
-;; Niz
-251 DEC 1
-252 DEC 2
-253 DEC 3
-254 DEC 4
-255 DEC 5
-256 DEC 6
-257 DEC 7
-258 DEC 8
-259 DEC 9
-260 DEC 10
-
-;; Potprogram
-300 DEC 0
-301 CIR
-302 BUN*300
+250 DEC 2
+251 DEC 6
+252 DEC 0

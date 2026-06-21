@@ -11,6 +11,7 @@
 */
 
 #define OUTPUT_LATENCY 1 // How long in ms takes to print one character
+//#define INPUT_LATENCY 1 // How long in ms takes to input one char
 #define POLL_TIMEOUT 1 // How long in ms should the polling cooldown be (to not burn the processor)
 
 /*
@@ -60,7 +61,7 @@ void teleprinterIn(pRegisters regState){
             }
         }
         pthread_mutex_unlock(&inputMutex);
-        sleepF(POLL_TIMEOUT);
+        //sleepF(POLL_TIMEOUT);
     }
     //puts("After in!");
 }

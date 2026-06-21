@@ -56,11 +56,17 @@ int memoryDumpCsv(const char *outPath, const word *mem, size_t size){
         return -1;
     }
 
-    fprintf(outF, "Address,Dec Value,Hex Value,Instruction\n");
+    fprintf(outF, "Address,Dec Value,Hex Value,Instruction,Character\n");
     for(size_t i = 0; i < size; i++){
         char buffer[16];
         if(instrToStr(buffer, memory[i]) == -1) errcode++;
-        fprintf(outF, "%zu,DEC %d,HEX %x,%s\n", i, memory[i], memory[i], buffer);
+        char charStr[8];
+        if(memory[i] >= ' ' && memory[i] <= 0xff) {
+            charStr[0] = memory[i];
+            charStr[1] = 0;
+        }
+        else strcpy(charStr, "???");
+        fprintf(outF, "%zu,DEC %d,HEX %x,%s,%s\n", i, memory[i], memory[i], buffer, charStr);
     }
 
     fclose(outF);

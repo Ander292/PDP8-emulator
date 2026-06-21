@@ -227,7 +227,7 @@ if( ( $mode -eq "full" ) -OR ( $mode -eq "buildEmulator" ) -OR ( $mode -eq "buil
 
 if ( ( $mode -eq "full" ) -OR ( $mode -eq "runAssembler" ) ) {
     Write-Host "Running program..."
-    & "$OutputExeA" "assets/in.txt" -o "build/work/out.bin" -s 200
+    & "$OutputExeA" $codePath -o "build/work/out.bin" -s 200
 }
 
 if ( ( $mode -eq "full" ) -OR ( $mode -eq "runEmulator" ) ) {

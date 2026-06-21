@@ -25,7 +25,7 @@
                 "name": "$(triangle-right) Run Assembler",
                 "color": "purple",
                 "singleInstance": true,
-                "command": "./compile.ps1 -mode runAssembler", // This is executed in the terminal.
+                "command": "./compile.ps1 -mode runAssembler -codePath assets/numberInput.txt", // This is executed in the terminal.
             },
             {
                 "name": "$(triangle-right) Run Emulator",
