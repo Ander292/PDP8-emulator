@@ -150,7 +150,7 @@ int main(int argc, char *argv[]){
         return 0;
     }
 
-    enterRawMode();
+    enterRawMode(dontRun != 0);
     if(dontRun) enterAux();
     registers regs = {0};
 

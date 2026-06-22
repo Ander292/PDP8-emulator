@@ -23,10 +23,16 @@ typedef struct consoleInfo{
     int width;
 } consoleInfo;
 
+/*
+    System.c functions
+*/
 void moveCursorPos(int x, int y);
 int instrToStr(char *outBuffer, word memoryWord);
 void sleepF(unsigned long miliseconds);
 void enterAux();
 void leaveAux();
+void enterRawMode(int echo);
+void leaveRawMode();
+byte pollInput(unsigned long timeoutMS);
 
 #endif

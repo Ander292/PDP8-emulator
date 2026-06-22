@@ -25,12 +25,13 @@ void leaveAux(){
 #include <conio.h>
 DWORD oldMode;
 
-void enterRawMode(){
+void enterRawMode(int echo){
     DWORD mode;
     HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
     GetConsoleMode(hStdin, &mode);
     oldMode = mode;
-    mode = mode & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT | ENABLE_INSERT_MODE) | ENABLE_VIRTUAL_TERMINAL_INPUT | ENABLE_PROCESSED_OUTPUT;
+    mode = mode & ~(ENABLE_INSERT_MODE | ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT) | ENABLE_VIRTUAL_TERMINAL_INPUT | ENABLE_PROCESSED_OUTPUT;
+
     SetConsoleMode(hStdin, mode);
 }
 
@@ -128,7 +129,7 @@ byte pollInput(unsigned long timeoutMS){
     return result;
 }
 
-void enterRawMode(){
+void enterRawMode(int echo){
     tcgetattr(STDIN_FILENO, &original);
     struct termios raw = original;
 

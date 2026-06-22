@@ -79,15 +79,6 @@ void ErrorExit(char *str);
 void processor(registers *regState, word *memory, int debugMode);
 void *processorThread(void *args);
 
-
-
-/*
-    System.c functions
-*/
-void enterRawMode();
-void leaveRawMode();
-byte pollInput(unsigned long timeoutMS);
-
 /*
     Teleprinter
 */
