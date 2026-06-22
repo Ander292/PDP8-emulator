@@ -1,0 +1,28 @@
+;; while(a <= b) y+=a; a++;
+;; a - b <= 0 uslov za petlju
+;; a - b > 0 uslov za break
+
+;; Provjera uslova
+200 LDA 302 ;; b
+201 CMA
+202 ADD 301 ;; a
+203 SPA
+204 BUN 206 ;; Skok na tijelo
+205 BUN 213 ;; Skok na kraj
+;; tijelo
+206 LDA 300
+207 ADD 301
+208 STA 300
+
+209 LDA 301
+210 INC
+211 STA 301
+
+212 BUN 200 ;; Skok na provjeru uslova
+;; Kraj petlje
+213 HLT
+
+
+300 DEC 0   ;; y
+301 DEC 1   ;; a
+302 DEC 3   ;; b

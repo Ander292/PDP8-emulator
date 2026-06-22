@@ -1,0 +1,28 @@
+;; a, b, c, y
+;; if(a + b < 10) then y = 2c
+;; else y = a - b
+
+;; a + b + (-10) < 0
+200 LDA 301
+201 ADD 302
+202 ADD 304
+203 SNA
+204 BUN 209 ;; Skok na else dio
+;; then dio
+205 LDA 303
+206 CIL
+207 STA 300
+208 BUN 213 ;; Skok na kraj
+;; else dio y = a - b
+209 LDA 302
+210 CMA
+211 ADD 301
+212 STA 300
+
+213 HLT     ;; kraj
+
+300 DEC 0   ;; y
+301 DEC 2   ;; a
+302 DEC 3   ;; b
+303 DEC 4   ;; c
+304 DEC -10  ;; konst.

@@ -1,0 +1,18 @@
+;; y = 2a - b + 100
+;; y = 2a + (-b) + 100
+200 LDA 252
+201 CMA
+202 STA 254
+203 LDA 251
+204 CIL
+205 ADD 254
+206 ADD 253
+207 STA 250
+208 HLT
+
+
+250 DEC 0   ;; y
+251 DEC 2   ;; a
+252 DEC 7   ;; b
+253 DEC 100 ;; konst.
+254 DEC 0   ;; temp

@@ -1,0 +1,45 @@
+;; suma niza, koristiti for petlju
+;; Niz se čuva na adresama od 401...
+;; for i 0 to 7: (i = 0; i < len)
+;; sum += arr[i]; // *(arr + i)
+
+;; Incijalizacija brojača
+200 CLA
+201 STA 398
+;; Provjera uslova (i - len < 0)
+202 LDA 400
+203 CMA
+204 ADD 398
+205 SNA
+206 BUN 219 ;; Skok van
+207 BUN 212 ;; Skok na tijelo
+;; Inkrement
+208 LDA 398
+209 INC
+210 STA 398
+211 BUN 202 ;; Skok na provjeru uslova
+;; Tijelo petlje
+212 LDA 399 ;; Učitavam adresu nultog
+213 ADD 398 ;; Sabiram brojač
+214 STA 396 ;; Čuvam tekuću adresu
+
+215 LDA*396 ;; Učitavam element
+216 ADD 397 ;; Sabiram sumu
+217 STA 397 ;; Čuvam sumu
+
+218 BUN 208 ;; Skok na inkrement
+
+219 HLT
+
+396 DEC 0   ;; temp, za indirekciju
+397 DEC 0   ;; Rezultat
+398 DEC 0   ;; Brojač
+399 DEC 401 ;; Adresa nultog
+400 DEC 7   ;; Dužina
+401 DEC 5   ;; Nulti član
+402 DEC 6
+403 DEC 2
+404 DEC 5
+405 DEC 10
+406 DEC 1
+407 DEC 8

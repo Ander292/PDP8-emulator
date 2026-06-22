@@ -1,0 +1,13 @@
+;; y = 2a + b
+;; 200 INSTR OPR
+
+;; y = a << 1 + b
+200 LDA 251
+201 CIL
+202 ADD 252
+203 STA 250
+204 HLT
+
+250 DEC 0   ;; y
+251 DEC 3   ;; a
+252 DEC 14  ;; b

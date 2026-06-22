@@ -211,7 +211,7 @@ DEFINE_INSTR(cir){
             regState->E = regState->ACC & 1;
             break;
         case 2: // Shifts the accumulator right
-            regState->ACC >> 1;
+            regState->ACC >>= 1;
             break;
         case 3: // Mends the old E on the MSB, resets the static old
             regState->ACC | (old << 15);

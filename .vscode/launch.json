@@ -8,7 +8,6 @@
             "program": "${workspaceFolder}/build/bin/emulator.exe",
             "args": [
                 "build/work/out.bin",
-                "200",
                 "-p",
                 "build/work/pre.csv",
                 "-c",

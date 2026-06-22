@@ -1,0 +1,36 @@
+;; y, a, b, c
+;; if((a + b < 10) && c > -3)
+;; then: y = a - b + 100
+;; else: y = c + 1
+;; Prvi uslov
+200 LDA 301
+201 ADD 302
+202 ADD 304
+203 SNA
+204 BUN 215 ;; Skok na else dio
+;; Drugi uslov
+205 LDA 303
+206 ADD 302
+207 SPA
+208 BUN 215 ;; Skok na else dio
+;; Then dio y = a - b + 100
+209 LDA 302
+210 CMA
+211 ADD 301
+212 ADD 306
+213 STA 300
+214 BUN 218 ;; Preskačem else
+;; Else dio: y = c+1
+215 LDA 303
+216 INC
+217 STA 300
+
+218 HLT     ;; Kraj
+
+300 DEC 0   ;; y
+301 DEC 2   ;; a
+302 DEC 3   ;; b
+303 DEC 5   ;; c
+304 DEC -10 ;; konst.
+305 DEC 3   ;; konst.
+306 DEC 100 ;; konst.
