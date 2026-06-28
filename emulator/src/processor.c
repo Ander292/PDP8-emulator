@@ -196,17 +196,17 @@ void processor(registers *regState, word *memory, int debugMode){
                 switch(regState->SC){
                     case 0: // Saving the old PC and zeroing PC
                         regState->MBR = regState->PC;
-                        regState->PC = 0;
+                        regState->MAR = 0;
                         break;
                     case 1: // Setting MAR to zero and incrementing PC to one
-                        regState->MAR = 0;
-                        regState->PC++;
+                        regState->PC = 0;
                         break;
                     case 2: // Saving old PC at address 0 and disabling interrupts
-                        memory[0] = regState->MBR;
+                        regState->PC++;
                         regState->IEN = 0;
                         break;
                     case 3: // Going to FETCH cycle (will now start from address 1)
+                        memory[regState->MAR] = regState->MBR;
                         regState->F = 0;
                         regState->R = 0;
                         break;

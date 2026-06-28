@@ -97,7 +97,7 @@ DEFINE_INSTR(bun){
     BUN* <address> is to be used for returning to the main program
 */
 DEFINE_INSTR(bsa){
-   switch(regState->SC){
+    switch(regState->SC){
         case 0: // Loading the destination address into MAR
             regState->MAR = GET_OPERAND(regState->MBR);
             break;
@@ -124,13 +124,14 @@ DEFINE_INSTR(isz){
         case 0: // Loading the operand address into MAR
             regState->MAR = GET_OPERAND(regState->MBR);
             break;
-        case 1: // Loading the operand itself from the address in MAR and increments it by one
-            regState->MBR = memory[regState->MAR] + 1;
+        case 1: // Loading the operand itself from the address in MAR
+            regState->MBR = memory[regState->MAR];
             break;
-        case 2: // Sends the incremented operand back into memory
+        case 2: // Increments the MBR by one
+            regState->MBR++;
+            break;
+        case 3: // Incrementing MBR and then skipping one instruction if MBR is zero and going to FETCH cycle
             memory[regState->MAR] = regState->MBR;
-            break;
-        case 3: // Skipping one instruction if MBR is zero and going to FETCH cycle
             if(regState->MBR == 0) regState->PC++;
             regState->F = 0;
             regState->R = 0;
@@ -176,8 +177,8 @@ DEFINE_INSTR(cma){
         case 0:
             regState->ACC = ~regState->ACC;
             break;
-        case 1:
-            regState->ACC++;
+        case 1: // Possibly do two's complement instead of first
+            //regState->ACC++;
             break;
         case 2:
             break; // Empty tact

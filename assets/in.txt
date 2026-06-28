@@ -1,13 +1,20 @@
-200 LDA 251
-201 CIL
-202 CIL
-203 CMA
-204 ADD 252
-205 CLE
-206 CIR
-207 STA 250
-208 HLT
+;; y = 2a - b + 100
+;; y = (a << 1) + (-b) + 100
+;; y = -(-(a << 1) + b) + 100
 
-250 DEC 0   ;; y
-251 DEC 3   ;; a
-252 DEC 16  ;; konst.
+;; a => 2a => -2a => -2a + b => -(-2a+b) => -(-2a+b) + 100
+200 LDA 250 ;; Učitavam a
+201 CIL     ;; Množim sa 2
+202 CMA     ;; Komplement
+203 INC     ;; Inkrement
+204 ADD 251 ;; Sabiram b
+205 CMA     ;; Komplement
+206 INC     ;; Drugi komplement
+207 ADD 253 ;; Sabiram 100
+208 STA 252 ;; Čuvam rješenje
+209 HLT
+
+250 DEC 2   ;; a
+251 DEC 3   ;; b
+252 DEC 0   ;; y
+253 DEC 100 ;; konstanta
